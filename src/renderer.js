@@ -1,8 +1,9 @@
 const showElement = (id) => {
-    document.getElementById(id).style.display = 'block';
+    //document.getElementById(id).style.display = 'block';
+    document.getElementById(id).classList.remove('hidden');
 };
 const hideElement = (id) => {
-    document.getElementById(id).style.display = 'none';
+    document.getElementById(id).classList.add('hidden');
 };
 
 const disableElement = (id) => {
@@ -12,24 +13,8 @@ const enableElement = (id) => {
     document.getElementById(id).disabled = false;
 };
 
-window.electronAPI.getApiKey((msg) => {
-    console.log('API key requested', msg);
-    showElement('prompt-api-key');
-    hideElement('main-window');
-});
-hideElement('prompt-api-key');
-hideElement('loadingSpinner');
-hideElement('output');
-
 const settingsWindow = document.getElementById('settings-window');
 const mainWindow = document.getElementById('main-window');
-
-const submitApiKey = async () => {
-    const apiKey = document.getElementById('apiKeyInit').value;
-    const response = await window.electronAPI.setApiKey(apiKey);
-    hideElement('prompt-api-key');
-    showElement('main-window');
-};
 
 document
     .getElementById('text-form')
@@ -38,35 +23,49 @@ document
 
         // reset DOM
         document.getElementById('error').innerText = '';
-        showElement('loadingSpinner');
+
+        // Disable button
         disableElement('submit');
+        showElement('loading-spinner');
+        hideElement('beautify-button-text');
 
         // Get the text from textarea
         const text = document.getElementById('text-input').value;
         try {
             const response = await window.electronAPI.beautify(text);
-            document.getElementById('output-text').innerText =
-                response.choices[0].message.content;
+            document.getElementById('output-text').innerText = response;
+            showElement('beautify-button-text');
             showElement('output');
-            hideElement('loadingSpinner');
             enableElement('submit');
+            hideElement('loading-spinner');
         } catch (error) {
             document.getElementById('error').innerHTML =
                 'Error when processing your request. ' + error;
+            showElement('beautify-button-text');
+            enableElement('submit');
+            hideElement('loading-spinner');
         }
     });
 
 // Settings interactions
 const setSettings = (settings) => {
-    document.getElementById('apiKey').value = settings['apiKey'];
+    document.getElementById('openai-apiKey').value = settings['openAIAPIKey'];
+    document.getElementById('mistralai-apiKey').value =
+        settings['mistralAIAPIKey'];
     document.getElementById('promptInstructions').value =
         settings['promptInstructions'];
-    document.getElementById('gptModels').value = settings['gptModel'];
+    document.getElementById('aiModels').value = settings['aiModel'];
 };
-window.electronAPI.viewSettings((settings) => {
+window.electronAPI.viewSettings((settings, showWelcomeMessage) => {
     setSettings(settings);
     settingsWindow.classList.remove('hidden');
-    // mainWindow.classList.add('opacity-50');
+    if (showWelcomeMessage) {
+        showElement('welcome');
+        hideElement('advanced-settings');
+    } else {
+        hideElement('welcome');
+        showElement('advanced-settings');
+    }
 });
 settingsWindow.addEventListener('click', function (event) {
     if (event.target === settingsWindow) {
@@ -81,14 +80,44 @@ document
 
         // Save settings
         const newSettings = {
-            apiKey: document.getElementById('apiKey').value,
+            openAIAPIKey: document.getElementById('openai-apiKey').value,
+            mistralAIAPIKey: document.getElementById('mistralai-apiKey').value,
             promptInstructions:
                 document.getElementById('promptInstructions').value,
-            gptModel: document.getElementById('gptModels').value
+            aiModel: document.getElementById('aiModels').value
         };
         window.electronAPI.setSettings(newSettings);
 
         // Close settings window
         settingsWindow.classList.add('hidden');
-        // mainWindow.classList.remove('opacity-50');
     });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const copyButton = document.getElementById('copy-to-clipboard');
+    const outputText = document.getElementById('output-text');
+
+    copyButton.addEventListener('click', function () {
+        // Create a range and selection object
+        const range = document.createRange();
+        const selection = window.getSelection();
+
+        // Select the text content of the output-text div
+        range.selectNodeContents(outputText);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Execute the copy command
+        document.execCommand('copy');
+
+        // Deselect the text after copying
+        selection.removeAllRanges();
+        showElement('copy-to-clipboard-success');
+        hideElement('copy-to-clipboard-text');
+        disableElement('copy-to-clipboard');
+        setTimeout(() => {
+            hideElement('copy-to-clipboard-success');
+            showElement('copy-to-clipboard-text');
+            enableElement('copy-to-clipboard');
+        }, 1000);
+    });
+});

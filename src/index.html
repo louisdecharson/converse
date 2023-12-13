@@ -11,38 +11,8 @@
                 Mail Craft 🦫
             </h1>
             <p class="text-slate-600 italic font-light dark:text-slate-400">
-                powered by OpenAI GPT
+                powered by AI
             </p>
-        </div>
-        <div
-            id="prompt-api-key"
-            class="p-6 bg-gray-100 rounded-md shadow-md dark:bg-slate-700"
-        >
-            <h2 class="text-lg font-bold mb-4 dark:text-slate-100">
-                Enter Your OpenAI API Key
-            </h2>
-            <form id="apiKeyForm">
-                <div class="mb-4">
-                    <label
-                        for="apiKey"
-                        class="block text-sm font-medium text-gray-600 dark:text-gray-200"
-                        >API Key:</label
-                    >
-                    <input
-                        type="text"
-                        id="apiKeyInit"
-                        name="apiKey"
-                        class="mt-1 p-2 w-full border rounded-md"
-                    />
-                </div>
-                <button
-                    type="button"
-                    onclick="submitApiKey()"
-                    class="bg-teal-600 text-white px-4 py-2 rounded-md"
-                >
-                    Save
-                </button>
-            </form>
         </div>
         <div id="main-window">
             <h3 class="text-lg font-semibold dark:text-slate-100">
@@ -60,18 +30,38 @@
                 ><br />
                 <hr class="mb-2 border-gray dark:border-slate-700" />
                 <button
-                    class="bg-teal-600 rounded text-white p-2 disabled:opacity-75"
+                    class="bg-teal-600 hover:bg-teal-800 rounded text-white px-4 py-2 disabled:opacity-75"
                     type="submit"
                     id="submit"
                 >
-                    🪄 Beautify Text
+                    <span id="beautify-button-text">🪄 Beautify Text</span>
+                    <div id="loading-spinner" class="flex hidden">
+                        <svg
+                            class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            ></circle>
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+                        <span>Processing...</span>
+                    </div>
                 </button>
-                <div id="loadingSpinner" class="italic text-slate-500">
-                    Loading...
-                </div>
                 <div id="error" class="text-rose-600 italic"></div>
             </form>
-            <div id="output" class="dark:bg-slate-900">
+            <div id="output" class="dark:bg-slate-900 hidden">
                 <div class="mt-2">
                     <h3 class="text-lg mb-2 font-semibold dark:text-slate-100">
                         Suggested reword
@@ -80,6 +70,33 @@
                         class="p-2 bg-slate-100 dark:bg-slate-800 dark:text-white"
                         id="output-text"
                     ></div>
+                    <div class="flex mt-2">
+                        <button
+                            class="flex bg-teal-600 hover:bg-teal-800 rounded p-2 text-sm items-center text-white disabled:opacity-75"
+                            id="copy-to-clipboard"
+                            title="Copy to clipboard"
+                            type="button"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 mr-2"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 18 20"
+                            >
+                                <path
+                                    d="M5 9V4.13a2.96 2.96 0 0 0-1.293.749L.879 7.707A2.96 2.96 0 0 0 .13 9H5Zm11.066-9H9.829a2.98 2.98 0 0 0-2.122.879L7 1.584A.987.987 0 0 0 6.766 2h4.3A3.972 3.972 0 0 1 15 6v10h1.066A1.97 1.97 0 0 0 18 14V2a1.97 1.97 0 0 0-1.934-2Z"
+                                ></path>
+                                <path
+                                    d="M11.066 4H7v5a2 2 0 0 1-2 2H0v7a1.969 1.969 0 0 0 1.933 2h9.133A1.97 1.97 0 0 0 13 18V6a1.97 1.97 0 0 0-1.934-2Z"
+                                ></path>
+                            </svg>
+                            <span id="copy-to-clipboard-text">Copy</span>
+                            <span id="copy-to-clipboard-success" class="hidden"
+                                >Copied !</span
+                            >
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,7 +105,40 @@
             class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
         >
             <div class="bg-white p-8 rounded shadow-md w-3/4 dark:bg-slate-900">
-                <h2 class="text-2xl font-semibold mb-4 dark:text-slate-200">
+                <div
+                    id="welcome"
+                    class="mb-4 rounded bg-slate-200 p-4 hidden dark:bg-slate-800"
+                >
+                    <h2
+                        class="text-center text-teal-600 text-2xl justify-center font-semibold mb-4"
+                    >
+                        Welcome to Craft Mail !
+                    </h2>
+                    <div class="dark:text-gray-300">
+                        <p>
+                            To use Craft Mail, you will need an API key from
+                            either
+                            <a
+                                class="text-blue-500 hover:text-blue-700 transition duration-300 ease-in-out"
+                                href="https://platform.openai.com/signup"
+                                >OpenAI</a
+                            >
+                            or
+                            <a
+                                class="text-blue-500 hover:text-blue-700 transition duration-300 ease-in-out"
+                                href="https://console.mistral.ai/"
+                                >MistralAI</a
+                            >.
+                        </p>
+                        <p>
+                            Craft Email will make request to OpenAI or MistralAI
+                            API servers based on the AI Model you choose in the
+                            settings.
+                        </p>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-semibold mb-4 dark:text-slate-200">
                     Settings
                 </h2>
 
@@ -97,50 +147,69 @@
                     <!-- OpenAI API Key -->
                     <div class="mb-4">
                         <label
-                            for="apiKey"
+                            for="openai-apiKey"
                             class="block text-sm font-medium text-gray-600 dark:text-gray-400"
                             >OpenAI API Key</label
                         >
                         <input
                             type="text"
-                            id="apiKey"
-                            name="apiKey"
+                            id="openai-apiKey"
+                            name="openai-apiKey"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
+                        />
+                    </div>
+                    <!-- MistralAI API Key -->
+                    <div class="mb-4">
+                        <label
+                            for="mistralai-apiKey"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >MistralAI API Key</label
+                        >
+                        <input
+                            type="text"
+                            id="mistralai-apiKey"
+                            name="mistralai-apiKey"
                             class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
                         />
                     </div>
 
-                    <!-- Prompt Instructions -->
+                    <!-- AI Models Dropdown -->
                     <div class="mb-4">
                         <label
-                            for="promptInstructions"
+                            for="aiModels"
                             class="block text-sm font-medium text-gray-600 dark:text-gray-400"
-                            >Prompt Instructions</label
-                        >
-                        <textarea
-                            id="promptInstructions"
-                            name="promptInstructions"
-                            rows="4"
-                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
-                        ></textarea>
-                    </div>
-
-                    <!-- GPT Models Dropdown -->
-                    <div class="mb-4">
-                        <label
-                            for="gptModels"
-                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
-                            >GPT Models</label
+                            >AI Model</label
                         >
                         <select
-                            id="gptModels"
-                            name="gptModels"
+                            id="aiModels"
+                            name="aiModels"
                             class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:text-white dark:bg-slate-800"
                         >
                             <option value="gpt-4-1106-preview">GPT-4</option>
                             <option value="gpt-3.5-turbo-1106">GPT-3.5</option>
-                            <!-- Add more options as needed -->
+                            <option value="mistral-tiny">MistralAI tiny</option>
                         </select>
                     </div>
+
+                    <!-- Prompt Instructions -->
+                    <details class="mb-4" id="advanced-settings">
+                        <summary class="dark:text-gray-200 mb-2">
+                            Advanced settings
+                        </summary>
+                        <div>
+                            <label
+                                for="promptInstructions"
+                                class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                                >Prompt Instructions</label
+                            >
+                            <textarea
+                                id="promptInstructions"
+                                name="promptInstructions"
+                                rows="4"
+                                class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
+                            ></textarea>
+                        </div>
+                    </details>
 
                     <!-- Submit Button -->
                     <button

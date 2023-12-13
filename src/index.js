@@ -17,9 +17,10 @@ if (store.get('settings:prompt-instructions') === undefined) {
 
 const getSettings = () => {
     let currentSettings = {
-        apiKey: store.get('settings:openai-api-key'),
+        openAIAPIKey: store.get('settings:openai-api-key'),
+        mistralAIAPIKey: store.get('settings:mistralai-api-key'),
         promptInstructions: store.get('settings:prompt-instructions'),
-        gptModel: store.get('settings:gpt-model')
+        aiModel: store.get('settings:ai-model')
     };
     return currentSettings;
 };
@@ -34,10 +35,12 @@ const createWindow = () => {
         }
     });
 
-    // check if we have an API key
-    if (store.get('settings:openai-api-key') === undefined) {
-        mainWindow.webContents.send('get-api-key', 'no api key');
-        console.log('Requesting API key message');
+    // check if we have any API key
+    if (
+        store.get('settings:openai-api-key') === undefined ||
+        store.get('settings:mistralai-api-key') === undefined
+    ) {
+        mainWindow.webContents.send('settings:view', getSettings(), true);
     }
 
     const template = [
@@ -53,7 +56,8 @@ const createWindow = () => {
                     click: () =>
                         mainWindow.webContents.send(
                             'settings:view',
-                            getSettings()
+                            getSettings(),
+                            false
                         )
                 },
                 { type: 'separator' },
@@ -126,12 +130,13 @@ const createWindow = () => {
 
     // Settings interactions
     ipcMain.on('settings:set', (event, settings) => {
-        store.set('settings:openai-api-key', settings['apiKey']);
+        store.set('settings:openai-api-key', settings['openAIAPIKey']);
+        store.set('settings:mistralai-api-key', settings['mistralAIAPIKey']);
         store.set(
             'settings:prompt-instructions',
             settings['promptInstructions']
         );
-        store.set('settings:gpt-model', settings['gptModel']);
+        store.set('settings:ai-model', settings['aiModel']);
     });
 
     // and load the index.html of the app.
@@ -146,14 +151,20 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
     ipcMain.handle('beautify', async (event, text) => {
-        const beautifiedText = await chat.craftEmail(
-            store.get('settings:openai-api-key'),
-            store.get('settings:prompt-instructions'),
-            store.get('settings:gpt-model'),
-            text
-        );
-        console.log('Text beautified');
-        return beautifiedText;
+        try {
+            const beautifiedText = await chat.craftEmail(
+                store.get('settings:openai-api-key'),
+                store.get('settings:mistralai-api-key'),
+                store.get('settings:prompt-instructions'),
+                store.get('settings:ai-model'),
+                text
+            );
+            console.log('Text beautified');
+            return beautifiedText;
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
     });
     ipcMain.handle('set-api-key', async (event, apiKey) => {
         store.set('settings:openai-api-key', apiKey);

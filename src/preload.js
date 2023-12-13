@@ -5,12 +5,11 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
     beautify: (text) => ipcRenderer.invoke('beautify', text),
-    setApiKey: (key) => ipcRenderer.invoke('set-api-key', key),
-    getApiKey: (callback) =>
-        ipcRenderer.on('get-api-key', (_event, value) => callback(value)),
     viewSettings: (callback) =>
-        ipcRenderer.on('settings:view', (_event, settings) =>
-            callback(settings)
+        ipcRenderer.on(
+            'settings:view',
+            (_event, settings, showWelcomeMessage) =>
+                callback(settings, showWelcomeMessage)
         ),
     setSettings: (settings) => ipcRenderer.send('settings:set', settings)
 });
