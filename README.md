@@ -5,4 +5,4 @@ Specifically designed for non-native English speakers, the app refines email con
 
 Contributions welcome !
 
-<img width="822" alt="image" src="https://github.com/louisdecharson/mail-craft/assets/3234544/7c6c462c-5fa1-4e21-9c9f-6833f74ca996">
+<img width="547" alt="image" src="https://github.com/louisdecharson/mail-craft/assets/3234544/a094471b-a5e3-40b6-ab82-4ba1e627b9d0">
