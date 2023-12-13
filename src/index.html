@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Mail Craft</title>
+        <link rel="stylesheet" href="../dist/output.css" />
+    </head>
+    <body class="dark:bg-slate-900">
+        <div class="text-center mb-4">
+            <h1 class="text-2xl text-center mb-1 dark:text-slate-200">
+                Mail Craft 🦫
+            </h1>
+            <p class="text-slate-600 italic font-light dark:text-slate-400">
+                powered by OpenAI GPT
+            </p>
+        </div>
+        <div
+            id="prompt-api-key"
+            class="p-6 bg-gray-100 rounded-md shadow-md dark:bg-slate-700"
+        >
+            <h2 class="text-lg font-bold mb-4 dark:text-slate-100">
+                Enter Your OpenAI API Key
+            </h2>
+            <form id="apiKeyForm">
+                <div class="mb-4">
+                    <label
+                        for="apiKey"
+                        class="block text-sm font-medium text-gray-600 dark:text-gray-200"
+                        >API Key:</label
+                    >
+                    <input
+                        type="text"
+                        id="apiKeyInit"
+                        name="apiKey"
+                        class="mt-1 p-2 w-full border rounded-md"
+                    />
+                </div>
+                <button
+                    type="button"
+                    onclick="submitApiKey()"
+                    class="bg-teal-600 text-white px-4 py-2 rounded-md"
+                >
+                    Save
+                </button>
+            </form>
+        </div>
+        <div id="main-window">
+            <h3 class="text-lg font-semibold dark:text-slate-100">
+                Your email
+            </h3>
+            <hr class="my-1 border-gray dark:border-slate-600" />
+            <form id="text-form" autofocus>
+                <textarea
+                    id="text-input"
+                    class="dark:bg-slate-800 dark:text-white p-2"
+                    rows="10"
+                    cols="100"
+                    placeholder="Type your email here..."
+                ></textarea
+                ><br />
+                <hr class="mb-2 border-gray dark:border-slate-700" />
+                <button
+                    class="bg-teal-600 rounded text-white p-2 disabled:opacity-75"
+                    type="submit"
+                    id="submit"
+                >
+                    🪄 Beautify Text
+                </button>
+                <div id="loadingSpinner" class="italic text-slate-500">
+                    Loading...
+                </div>
+                <div id="error" class="text-rose-600 italic"></div>
+            </form>
+            <div id="output" class="dark:bg-slate-900">
+                <div class="mt-2">
+                    <h3 class="text-lg mb-2 font-semibold dark:text-slate-100">
+                        Suggested reword
+                    </h3>
+                    <div
+                        class="p-2 bg-slate-100 dark:bg-slate-800 dark:text-white"
+                        id="output-text"
+                    ></div>
+                </div>
+            </div>
+        </div>
+        <div
+            id="settings-window"
+            class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
+        >
+            <div class="bg-white p-8 rounded shadow-md w-3/4 dark:bg-slate-900">
+                <h2 class="text-2xl font-semibold mb-4 dark:text-slate-200">
+                    Settings
+                </h2>
+
+                <!-- Form -->
+                <form id="settings">
+                    <!-- OpenAI API Key -->
+                    <div class="mb-4">
+                        <label
+                            for="apiKey"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >OpenAI API Key</label
+                        >
+                        <input
+                            type="text"
+                            id="apiKey"
+                            name="apiKey"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
+                        />
+                    </div>
+
+                    <!-- Prompt Instructions -->
+                    <div class="mb-4">
+                        <label
+                            for="promptInstructions"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >Prompt Instructions</label
+                        >
+                        <textarea
+                            id="promptInstructions"
+                            name="promptInstructions"
+                            rows="4"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-slate-800 dark:text-white"
+                        ></textarea>
+                    </div>
+
+                    <!-- GPT Models Dropdown -->
+                    <div class="mb-4">
+                        <label
+                            for="gptModels"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >GPT Models</label
+                        >
+                        <select
+                            id="gptModels"
+                            name="gptModels"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:text-white dark:bg-slate-800"
+                        >
+                            <option value="gpt-4-1106-preview">GPT-4</option>
+                            <option value="gpt-3.5-turbo-1106">GPT-3.5</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="w-full bg-teal-600 text-white p-2 rounded-md hover:bg-teal-800 focus:outline-none focus:ring focus:border-blue-300"
+                    >
+                        Save Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+        <script src="./renderer.js"></script>
+    </body>
+</html>

@@ -1,0 +1,36 @@
+{
+    "name": "mail-craft",
+    "productName": "Mail Craft",
+    "version": "0.0.1",
+    "description": "Help you write better email, powered by GPT models",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "electron-forge start",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
+        "publish": "electron-forge publish",
+        "lint": "echo \"No linting configured\""
+    },
+    "keywords": [],
+    "author": {
+        "name": "Louis de Charsonville",
+        "email": "louis_de_charsonville@mckinsey.com"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "electron-squirrel-startup": "^1.0.0",
+        "electron-store": "^8.1.0",
+        "openai": "^4.20.1"
+    },
+    "devDependencies": {
+        "@electron-forge/cli": "^7.2.0",
+        "@electron-forge/maker-deb": "^7.2.0",
+        "@electron-forge/maker-rpm": "^7.2.0",
+        "@electron-forge/maker-squirrel": "^7.2.0",
+        "@electron-forge/maker-zip": "^7.2.0",
+        "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
+        "electron": "28.0.0",
+        "prettier": "^3.1.1",
+        "tailwindcss": "^3.3.6"
+    }
+}
