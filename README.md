@@ -1,8 +1,50 @@
 # Mail Craft
 
-Mail Craft is an *Electron* desktop app written in JavaScript that leverages OpenAI's Large Language Models (LLM) API. 
-Specifically designed for non-native English speakers, the app refines email content using advanced language generation techniques, ensuring clearer, more idiomatic communication. Tailored for technical users, "Mail Craft" empowers individuals to effortlessly convey ideas in English, fostering effective cross-cultural communication.
+Mail Craft is a desktop app that helps to **write better emails** leveraging LLM models.
 
-Contributions welcome !
+## Current models supported
 
-<img width="547" alt="image" src="https://github.com/louisdecharson/mail-craft/assets/3234544/a094471b-a5e3-40b6-ab82-4ba1e627b9d0">
+- OpenAI GPT 4 (gpt-4-1106-preview)
+- OpenAI GPT 3.5 (gpt-3.5-turbo-1106)
+- MistralAI tiny
+
+## Technology
+
+- [Electron JS](http://electronjs.org/)
+- [Tailwind CSS](http://tailwindcss.com)
+
+## Development
+
+Contributions are welcome. 
+
+**Installation**
+```bash
+npm install
+```
+
+Rebuild sqlite3 using `electron-rebuild`:
+```bash
+./node_modules/.bin/electron-rebuild -f -w sqlite3
+```
+
+**Run the app**
+
+```bash
+npm start
+```
+
+**Build**
+
+Compile CSS
+```bash
+npx tailwindcss -i ./src/index.css -o ./dist/output.css
+```
+
+Build the app:
+```bash
+npm run make
+```
+
+## Screenshots
+
+![Screenshot of Mail Craft](./screenshots/screenshot_v0.0.4.png)
