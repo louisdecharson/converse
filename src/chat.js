@@ -18,8 +18,8 @@ const craftEmail = async (
     } else {
         throw new Error('Model unknown');
     }
-    const response = await model.chatCompletion(text);
-    return response;
+    const beautifiedText = await model.chatCompletion(text);
+    return { aiModelProvider, beautifiedText };
 };
 
 module.exports = {

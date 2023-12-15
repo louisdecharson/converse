@@ -15,6 +15,7 @@ const enableElement = (id) => {
 
 const settingsWindow = document.getElementById('settings-window');
 const mainWindow = document.getElementById('main-window');
+const localChatHistory = {};
 
 document
     .getElementById('text-form')
@@ -38,6 +39,13 @@ document
             showElement('output');
             enableElement('submit');
             hideElement('loading-spinner');
+            // add to history
+            addItemToLocalHistory(
+                text,
+                response,
+                document.getElementById('aiModels').value,
+                document.getElementById('promptInstructions').value
+            );
         } catch (error) {
             document.getElementById('error').innerHTML =
                 'Error when processing your request. ' + error;
@@ -72,6 +80,11 @@ settingsWindow.addEventListener('click', function (event) {
         settingsWindow.classList.add('hidden');
     }
 });
+document
+    .getElementById('cancel-view-settings')
+    .addEventListener('click', (event) => {
+        settingsWindow.classList.add('hidden');
+    });
 
 document
     .getElementById('settings')
@@ -121,3 +134,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     });
 });
+// Sidebar
+let historyAlreadyLoaded = false;
+const toggleSidebar = () => {
+    const sidebar = document.getElementById('sidebar');
+    const mainContainer = document.getElementById('main-container');
+
+    // Toggle sidebar width and main content margin
+    if (sidebar.style.width === '' || sidebar.style.width === '0px') {
+        sidebar.style.width = '200px';
+        mainContainer.style.marginLeft = '200px';
+    } else {
+        sidebar.style.width = '0';
+        mainContainer.style.marginLeft = '0';
+    }
+};
+document.getElementById('toggle-sidebar').addEventListener('click', () => {
+    toggleSidebar();
+});
+
+// Chat history
+const addItemToLocalHistory = (
+    user_content,
+    response,
+    aiModel,
+    promptInstructions
+) => {
+    const chatItemNum = Object.keys(localChatHistory).length + 1;
+    const chatItemId = `chat-${chatItemNum}`;
+    localChatHistory[chatItemId] = {
+        user_content: user_content,
+        response: response,
+        aiModel: aiModel,
+        promptInstructions: promptInstructions
+    };
+    addRow(processString(user_content, 40), user_content, response);
+};
+window.electronAPI.viewHistory((chatHistory, toggle) => {
+    if (!historyAlreadyLoaded) {
+        for (let i = chatHistory.length - 1; i > -1; i--) {
+            const chatItem = chatHistory[i];
+            addItemToLocalHistory(
+                chatItem['user_content'],
+                chatItem['response'],
+                chatItem['model'],
+                chatItem['prompt_instructions']
+            );
+        }
+        historyAlreadyLoaded = true;
+    }
+    if (toggle) {
+        toggleSidebar();
+    }
+});
+
+function addRow(snippet, content, response) {
+    // Get the table body
+    const tableBody = document.getElementById('chat-history-table');
+
+    // Create a new row
+    // var newRow = tableBody.insertRow(tableBody.rows.length);
+    const newRow = tableBody.insertRow(0);
+
+    // Set the background color based on the row index
+    newRow.className = 'mb-2';
+
+    // Add a cell to the row
+    var cell = newRow.insertCell(0);
+    cell.className = `cursor-pointer p-1 border-b-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
+    cell.textContent = snippet;
+    cell.addEventListener('click', () => {
+        document.getElementById('text-input').value = content;
+        showElement('output');
+        document.getElementById('output-text').innerText = response;
+    });
+}
+
+const processString = (inputString, maxLength) => {
+    // Replace non-visible characters
+    var sanitizedString = inputString.replace(/[\x00-\x1F\x7F-\x9F]/g, ' ');
+
+    // Shorten the string if it exceeds the maximum length
+    if (sanitizedString.length > maxLength) {
+        sanitizedString = sanitizedString.substring(0, maxLength - 3) + '...';
+    }
+
+    return sanitizedString;
+};

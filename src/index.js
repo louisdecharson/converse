@@ -4,9 +4,10 @@ const chat = require('./chat.js');
 const Store = require('electron-store');
 
 const { promptInstructions, openAIGPTModel } = require('./config.js');
+const { HistoryDB } = require('./history.js');
 
 const store = new Store();
-
+const chatHistory = new HistoryDB(app.getPath('userData'));
 // Set defaults
 if (store.get('settings:gpt-model') === undefined) {
     store.set('settings:gpt-model', openAIGPTModel);
@@ -43,6 +44,16 @@ const createWindow = () => {
         mainWindow.webContents.send('settings:view', getSettings(), true);
     }
 
+    const viewChatHistory = (toggle = false) => {
+        chatHistory.findMany((err, rows) => {
+            if (err) {
+                mainWindow.webContents.send('history:send', [], toggle);
+            } else {
+                mainWindow.webContents.send('history:send', rows, toggle);
+            }
+        });
+    };
+
     const template = [
         // { role: 'appMenu' }
         {
@@ -59,6 +70,12 @@ const createWindow = () => {
                             getSettings(),
                             false
                         )
+                },
+                { type: 'separator' },
+                {
+                    label: 'Show Chat History',
+                    accelerator: 'Cmd+Y',
+                    click: () => viewChatHistory(true)
                 },
                 { type: 'separator' },
                 { role: 'services' },
@@ -142,6 +159,8 @@ const createWindow = () => {
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
+    // send history
+
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
 };
@@ -152,18 +171,27 @@ const createWindow = () => {
 app.whenReady().then(() => {
     ipcMain.handle('beautify', async (event, text) => {
         try {
-            const beautifiedText = await chat.craftEmail(
+            const model = store.get('settings:ai-model');
+            const prompInstructions = store.get('settings:prompt-instructions');
+            const { aiModelProvider, beautifiedText } = await chat.craftEmail(
                 store.get('settings:openai-api-key'),
                 store.get('settings:mistralai-api-key'),
-                store.get('settings:prompt-instructions'),
-                store.get('settings:ai-model'),
+                promptInstructions,
+                model,
                 text
             );
-            console.log('Text beautified');
+            console.log('Text beautified', beautifiedText);
+            chatHistory.insert(
+                model,
+                aiModelProvider,
+                promptInstructions,
+                text,
+                beautifiedText
+            );
             return beautifiedText;
         } catch (error) {
             console.log(error);
-            throw new Error(error);
+            throw new Error(error.message);
         }
     });
     ipcMain.handle('set-api-key', async (event, apiKey) => {

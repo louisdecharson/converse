@@ -73,14 +73,14 @@ class MistralModel extends AIModel {
             );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`HTTP error! Status: ${response.status}.`);
             }
             const data = await response.json();
             return data.choices[0].message.content;
         } catch (error) {
             // Handle errors here
             console.error('Error:', error);
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 }
