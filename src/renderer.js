@@ -139,14 +139,16 @@ let historyAlreadyLoaded = false;
 const toggleSidebar = () => {
     const sidebar = document.getElementById('sidebar');
     const mainContainer = document.getElementById('main-container');
-
+    const appTitle = document.getElementById('app-title');
     // Toggle sidebar width and main content margin
     if (sidebar.style.width === '' || sidebar.style.width === '0px') {
         sidebar.style.width = '200px';
         mainContainer.style.marginLeft = '200px';
+        appTitle.style.marginLeft = '-200px';
     } else {
         sidebar.style.width = '0';
         mainContainer.style.marginLeft = '0';
+        appTitle.style.marginLeft = '0';
     }
 };
 document.getElementById('toggle-sidebar').addEventListener('click', () => {
@@ -201,7 +203,7 @@ function addRow(snippet, content, response) {
 
     // Add a cell to the row
     var cell = newRow.insertCell(0);
-    cell.className = `cursor-pointer p-1 border-b-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
+    cell.className = `cursor-pointer p-1 border-b border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
     cell.textContent = snippet;
     cell.addEventListener('click', () => {
         document.getElementById('text-input').value = content;
@@ -221,3 +223,36 @@ const processString = (inputString, maxLength) => {
 
     return sanitizedString;
 };
+
+const taskbar = document.getElementById('taskbar');
+document.addEventListener('scroll', () => {
+    // Check if the user has scrolled down
+    if (window.scrollY > 0) {
+        // If scrolled down, add a class to the taskbar
+        taskbar.classList.add('border-b');
+    } else {
+        // If at the top, remove the class
+        taskbar.classList.remove('border-b');
+    }
+});
+
+let nbChatHistoryItems = 15;
+document
+    .getElementById('history-load-more')
+    .addEventListener('click', async () => {
+        nbChatHistoryItems += 10;
+        const chatHistory =
+            await window.electronAPI.viewMoreHistory(nbChatHistoryItems);
+        console.log('history', chatHistory);
+        const tableBody = document.getElementById('chat-history-table');
+        tableBody.innerHTML = '';
+        for (let i = chatHistory.length - 1; i > -1; i--) {
+            const chatItem = chatHistory[i];
+            addItemToLocalHistory(
+                chatItem['user_content'],
+                chatItem['response'],
+                chatItem['model'],
+                chatItem['prompt_instructions']
+            );
+        }
+    });

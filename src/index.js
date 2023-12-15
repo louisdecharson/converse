@@ -33,7 +33,8 @@ const createWindow = () => {
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
-        }
+        },
+        show: false
     });
 
     // check if we have any API key
@@ -45,13 +46,17 @@ const createWindow = () => {
     }
 
     const viewChatHistory = (toggle = false) => {
-        chatHistory.findMany((err, rows) => {
-            if (err) {
-                mainWindow.webContents.send('history:send', [], toggle);
-            } else {
-                mainWindow.webContents.send('history:send', rows, toggle);
-            }
-        });
+        chatHistory.findMany(
+            (err, rows) => {
+                if (err) {
+                    mainWindow.webContents.send('history:send', [], toggle);
+                } else {
+                    mainWindow.webContents.send('history:send', rows, toggle);
+                }
+            },
+            {},
+            15
+        );
     };
 
     const template = [
@@ -156,6 +161,7 @@ const createWindow = () => {
         store.set('settings:ai-model', settings['aiModel']);
     });
 
+    viewChatHistory(false);
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
@@ -163,6 +169,10 @@ const createWindow = () => {
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
+    mainWindow.on('ready-to-show', function () {
+        mainWindow.show();
+        mainWindow.focus();
+    });
 };
 
 // This method will be called when Electron has finished
@@ -198,6 +208,11 @@ app.whenReady().then(() => {
         store.set('settings:openai-api-key', apiKey);
         return 'apikey set';
     });
+    ipcMain.handle('history:view-more', async (event, limit) => {
+        const rows = await asyncWrapper(chatHistory, 'findMany', {}, limit);
+        console.log(rows.length);
+        return rows;
+    });
     createWindow();
 });
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -219,3 +234,18 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+function asyncWrapper(instance, asyncMethod, ...args) {
+    return new Promise((resolve, reject) => {
+        instance[asyncMethod](
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            },
+            ...args
+        );
+    });
+}

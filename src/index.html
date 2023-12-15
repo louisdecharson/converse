@@ -5,11 +5,11 @@
         <title>Mail Craft</title>
         <link rel="stylesheet" href="../dist/output.css" />
     </head>
-    <body class="dark:bg-neutral-800 p-2">
+    <body class="dark:bg-neutral-800">
         <div id="main-window">
             <div
                 id="sidebar"
-                class="fixed left-0 top-0 w-0 overflow-hidden h-full bg-gray-200 transition-all text-sm duration-100 ease-in-out dark:bg-neutral-700"
+                class="fixed left-0 top-0 w-0 overflow-x-hidden h-full bg-gray-200 transition-all text-sm duration-100 ease-in-out dark:bg-neutral-700"
             >
                 <div
                     class="my-2 ml-2 text-sm font-bold text-gray-600 dark:text-gray-300"
@@ -17,36 +17,59 @@
                     Chat History
                 </div>
                 <table style="width: 190px" class="m-auto dark:bg-neutral-600">
-                    <tbody id="chat-history-table" class="p-1"></tbody>
+                    <tbody
+                        id="chat-history-table"
+                        class="p-1 overflow-y-auto"
+                    ></tbody>
                 </table>
+                <div class="w-full flex items-center">
+                    <button
+                        id="history-load-more"
+                        class="p-1 m-2 text-gray-600 bg-gray-200 dark:bg-neutral-600 w-full dark:text-neutral-300 rounded"
+                    >
+                        Load more...
+                    </button>
+                </div>
             </div>
             <div id="main-container">
-                <button id="toggle-sidebar">
-                    <svg
-                        fill="#6B6C6D"
-                        width="24px"
-                        height="24px"
-                        viewBox="0 0 1.68 1.68"
-                        xmlns="http://www.w3.org/2000/svg"
+                <div
+                    id="taskbar"
+                    class="w-full top-0 fixed h-10 bg-white dark:bg-neutral-800 flex items-center border-gray-300 dark:border-neutral-600"
+                >
+                    <button
+                        id="toggle-sidebar"
+                        class="hover:bg-gray-200 ml-2 py-1 px-2 rounded hover:bg-neutral-700"
+                        title="View chat history"
                     >
-                        <path
-                            d="M0.231 1.487h1.217c0.147 0 0.221 -0.073 0.221 -0.218V0.411c0 -0.145 -0.074 -0.218 -0.221 -0.218H0.231C0.085 0.193 0.011 0.265 0.011 0.411V1.269c0 0.146 0.075 0.218 0.221 0.218Zm0.002 -0.113c-0.07 0 -0.11 -0.037 -0.11 -0.11V0.416c0 -0.073 0.039 -0.11 0.11 -0.11h0.313v1.068Zm1.213 -1.068c0.07 0 0.11 0.037 0.11 0.11V1.264c0 0.073 -0.04 0.11 -0.11 0.11h-0.79V0.306Zm-1.035 0.261c0.021 0 0.04 -0.019 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.02 0.018 0.039 0.039 0.039Zm0 0.182c0.021 0 0.04 -0.019 0.04 -0.04 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.021 0.018 0.04 0.039 0.04Zm0 0.181c0.021 0 0.04 -0.018 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039s0.018 0.039 0.039 0.039Z"
-                        />
-                    </svg>
-                </button>
-                <div id="main-content" class="px-4">
-                    <div class="text-center mb-1">
-                        <h1 class="text-xl text-center dark:text-neutral-200">
-                            Mail Craft 🦫
-                        </h1>
-                        <p
-                            class="text-neutral-600 italic font-light dark:text-neutral-400"
+                        <svg
+                            fill="#6B6C6D"
+                            width="24px"
+                            height="24px"
+                            viewBox="0 0 1.68 1.68"
+                            xmlns="http://www.w3.org/2000/svg"
                         >
-                            powered by AI
-                        </p>
+                            <path
+                                d="M0.231 1.487h1.217c0.147 0 0.221 -0.073 0.221 -0.218V0.411c0 -0.145 -0.074 -0.218 -0.221 -0.218H0.231C0.085 0.193 0.011 0.265 0.011 0.411V1.269c0 0.146 0.075 0.218 0.221 0.218Zm0.002 -0.113c-0.07 0 -0.11 -0.037 -0.11 -0.11V0.416c0 -0.073 0.039 -0.11 0.11 -0.11h0.313v1.068Zm1.213 -1.068c0.07 0 0.11 0.037 0.11 0.11V1.264c0 0.073 -0.04 0.11 -0.11 0.11h-0.79V0.306Zm-1.035 0.261c0.021 0 0.04 -0.019 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.02 0.018 0.039 0.039 0.039Zm0 0.182c0.021 0 0.04 -0.019 0.04 -0.04 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.021 0.018 0.04 0.039 0.04Zm0 0.181c0.021 0 0.04 -0.018 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039s0.018 0.039 0.039 0.039Z"
+                            />
+                        </svg>
+                    </button>
+                    <div class="text-center flex-1 -z-10">
+                        <h1
+                            id="app-title"
+                            class="text-base text-center dark:text-neutral-200"
+                        >
+                            Mail Craft 🦫
+                            <span
+                                class="text-neutral-600 italic font-light dark:text-neutral-400"
+                            >
+                                , powered by AI
+                            </span>
+                        </h1>
                     </div>
+                </div>
+                <div id="main-content" class="px-4 py-2">
                     <h3
-                        class="text-base font-semibold text-gray-700 dark:text-neutral-300"
+                        class="pt-10 text-base font-semibold text-gray-700 dark:text-neutral-300"
                     >
                         Your email
                     </h3>

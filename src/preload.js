@@ -15,5 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     viewHistory: (callback) =>
         ipcRenderer.on('history:send', (_event, chatHistory, toggle) =>
             callback(chatHistory, toggle)
-        )
+        ),
+    viewMoreHistory: (nbItems) =>
+        ipcRenderer.invoke('history:view-more', nbItems)
 });
