@@ -1,7 +1,7 @@
 {
     "name": "mail-craft",
     "productName": "Mail Craft",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "description": "Help you write better email, powered by GPT models",
     "main": "src/index.js",
     "scripts": {
