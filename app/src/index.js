@@ -2,12 +2,16 @@ const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron/main');
 const path = require('node:path');
 const chat = require('./chat.js');
 const Store = require('electron-store');
-
+const sqlite3 = require('sqlite3');
 const { promptInstructions, openAIGPTModel } = require('./config.js');
-const { HistoryDB } = require('./history.js');
+const { HistoryTable, InstructionsTable } = require('./db.js');
 
-const store = new Store();
-const chatHistory = new HistoryDB(app.getPath('userData'));
+const store = new Store(); // store user preferences
+const dbPath = path.join(app.getPath('userData'), 'history.db');
+const database = new sqlite3.Database(dbPath);
+const chatHistory = new HistoryTable(database); // store chat history
+const chatInstructions = new InstructionsTable(database); // store user configuration
+
 // Set defaults
 if (store.get('settings:gpt-model') === undefined) {
     store.set('settings:gpt-model', openAIGPTModel);
@@ -183,22 +187,27 @@ app.whenReady().then(() => {
         try {
             const model = store.get('settings:ai-model');
             const prompInstructions = store.get('settings:prompt-instructions');
-            const { aiModelProvider, beautifiedText } = await chat.craftEmail(
+            const {
+                aiModelProvider,
+                textReponse,
+                promptTokens,
+                completionTokens,
+                totalTokens
+            } = await chat.craftEmail(
                 store.get('settings:openai-api-key'),
                 store.get('settings:mistralai-api-key'),
                 promptInstructions,
                 model,
                 text
             );
-            console.log('Text beautified', beautifiedText);
             chatHistory.insert(
                 model,
                 aiModelProvider,
                 promptInstructions,
                 text,
-                beautifiedText
+                textReponse
             );
-            return beautifiedText;
+            return textReponse;
         } catch (error) {
             console.log(error);
             throw new Error(error.message);

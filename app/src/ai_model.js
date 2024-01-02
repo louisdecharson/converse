@@ -6,6 +6,35 @@ class AIModel {
         this.apiKey = apiKey;
         this.promptInstructions = promptInstructions;
     }
+    async requestAPI(text) {
+        throw new Error('Not implemented');
+    }
+    getTextResponse() {
+        return this.response.choices[0].message.content;
+    }
+    getPromptTokens() {
+        return this.response.usage.prompt_tokens;
+    }
+    getCompletionTokens() {
+        return this.response.usage.completions_tokens;
+    }
+    getTotalTokens() {
+        return this.response.usage.total_tokens;
+    }
+    async chatCompletion(text) {
+        this.response = await this.requestAPI(text);
+        const textResponse = this.getTextResponse();
+        const promptTokens = this.getPromptTokens();
+        const completionTokens = this.getCompletionTokens();
+        const totalTokens = this.getTotalTokens();
+
+        return {
+            textResponse: textResponse,
+            promptTokens: promptTokens,
+            completionTokens: completionTokens,
+            totalTokens: totalTokens
+        };
+    }
 }
 
 class GPTModel extends AIModel {
@@ -15,8 +44,8 @@ class GPTModel extends AIModel {
             apiKey: apiKey
         });
     }
-    async chatCompletion(text) {
-        const response = await this.openai.chat.completions.create({
+    async requestAPI(text) {
+        this.response = await this.openai.chat.completions.create({
             model: this.model,
             messages: [
                 {
@@ -34,7 +63,6 @@ class GPTModel extends AIModel {
             frequency_penalty: 0,
             presence_penalty: 0
         });
-        return response.choices[0].message.content;
     }
 }
 
@@ -76,7 +104,7 @@ class MistralModel extends AIModel {
                 throw new Error(`HTTP error! Status: ${response.status}.`);
             }
             const data = await response.json();
-            return data.choices[0].message.content;
+            this.response = data.choices[0].message.content;
         } catch (error) {
             // Handle errors here
             console.error('Error:', error);

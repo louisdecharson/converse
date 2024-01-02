@@ -1,0 +1,539 @@
+* Tasks
+
++ [ ] Create migration script
++ [ ] Change 
++ [ ] Add ability to switch prompt config / model 
++ [ ] Add screen to create new prompt config
++ [ ] Add user management
++ [ ] Create user and license in store
++ [ ] Create call to server to check for license
++ [ ] Remove APIs key from the app
+  
+  
+** User management
+- Create new user 
+
+** Manage other languages
+
+
+* Ideas
+** Database
+_History_:
+- timestamp
+- pro
+
+* Code Playground
+** Preamble
+
+#+begin_src elisp
+(setenv "NODE_PATH"
+    (concat
+     "./node_modules"  ":"
+     (getenv "NODE_PATH")
+    )
+  )
+#+end_src
+
+#+RESULTS:
+: ./node_modules:/Users/Louis_de_Charsonville./node_modules:
+
+** Snippets
+
+
+#+begin_src js :results value pp
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database("/Users/Louis_de_Charsonville/Library/Application Support/Mail Craft/history.db")
+entries = {};
+let counter = 0;
+let nbTokens;
+db.all("SELECT * FROM HISTORY", {}, (err, rows) => {
+    rows.forEach((row) => {
+        nbTokens = row['response'].replace('\n', ' ').split(" ").length / 0.75;
+        counter += nbTokens
+        console.log(nbTokens, counter);
+        console.log(row['response'])
+    });
+});
+#+End_src
+
+#+RESULTS:
+#+begin_example
+undefined9.333333333333334 9.333333333333334
+Hello,
+
+This is a test email.
+
+Best,
+
+Louis (unchanged)
+12 21.333333333333336
+Hi,
+
+This is a test email.
+
+Best,
+
+Louis (minor grammar adjustment)
+116 137.33333333333334
+Hi Lapo and Max,
+
+I'm grateful for our recent discussion, which has further piqued my excitement about contributing to this project. With my background and career goals aligned, I find this opportunity intriguing. I've realized the importance of establishing client trust and am prepared to dedicate three to four days a week in Geneva during the blueprinting phase and transition to a hybrid mode during implementation. To move forward with PD and attend the upcoming meeting, please provide me with the email invite (CC) for confirmation.
+
+Best regards,
+
+Louis
+22.666666666666668 160
+Hi,
+
+I'm interested in trying out this new feature, chat history. Have you heard about it?
+
+Best regards,
+Louis
+21.333333333333332 181.33333333333334
+Hi,
+
+I'm excited to try out this new chat history feature. Have you heard about it?
+
+Best,
+Louis
+42.666666666666664 224
+Dear Adam,
+
+I hope you're doing well! How was your weekend? I heard about your new product release. Congratulations! By the way, Adam, do you handle the software purchases at your company?
+
+Best,
+
+John
+34.666666666666664 258.6666666666667
+Dear Laetitia,
+
+Thank you for reaching out about the study. I'm still waiting for confirmation myself. Once I have more details, we can arrange to connect.
+
+Best,
+
+Louis
+37.333333333333336 296
+Hey Leon, I'm grateful for your positive attitude and energy. It was great working with you on several studies, and I'm excited about the possibility of collaborating further.
+41.333333333333336 337.3333333333333
+Hi Leon,
+I'm grateful for your motivating attitude and enthusiasm. It was a pleasure working with you on several studies. I'm excited about the possibility of collaborating again in the future.
+44 381.3333333333333
+Hi Leon,
+
+Thank you so much for your infectious enthusiasm and drive. Having you on my team for several projects has been a great opportunity, and I'm eagerly looking forward to future collaborations!
+38.666666666666664 420
+Hey Leon,
+
+Thank you so much for your infectious enthusiasm and drive! We've successfully tackled many projects together this year, and I'm really looking forward to more collaborations!
+
+Best regards,
+41.333333333333336 461.3333333333333
+Dear Martin,
+
+Thank you for your unwavering commitment and determination in delivering nothing but the best to our clients through your finely-tuned Excel models and a wealth of insightful ideas!
+
+Best regards,
+96 557.3333333333333
+Dear Vale,
+
+I want to express my deep gratitude for your mentorship and guidance. Your assistance in helping me navigate the intricacies of the Firm has been invaluable, and I am particularly thankful for the opportunities you have given me to participate in numerous client conversations. These engagements have led to impactful studies, and it's an experience that has greatly contributed to my professional growth.
+
+Thank you once again for your support.
+
+Best regards,
+33.333333333333336 590.6666666666666
+Dear Julie,
+
+Thank you so much for your insightful mentorship. Our quarterly coffee meetings are always an invaluable source of guidance and insights!
+
+Best regards,
+[Your Name]
+29.333333333333332 620
+Thank you so much, Julie, for your insightful mentorship. Our quarterly coffee meetings are always a fantastic source of wisdom and guidance!
+29.333333333333332 649.3333333333334
+Thank you so much Julie for your insightful mentorship. Our quarterly coffee meetings are always a valuable source of guidance and advice!
+28 677.3333333333334
+Thank you, Julie, for your valuable mentorship during our quarterly coffee meetings. I look forward to continuing to learn from you.
+29.333333333333332 706.6666666666667
+Hi Zaid,
+
+No reply received from them. assuming it's okay for us to terminate the cloud instance within the next 48 hours.
+
+Best,
+Louis
+41.333333333333336 748.0000000000001
+Hi John (aka Johnny),
+
+I'm here to help you write clear and idiomatic emails. Mail Craft comes highly recommended. Let me know if you'd like assistance in using it.
+
+Best,
+Your helpful assistant.
+69.33333333333333 817.3333333333335
+Hello,
+
+My name is John Beaver, and I'm having some difficulty crafting clear and idiomatic emails that effectively convey my intentions.
+I'm reaching out for assistance in improving my email-writing skills.
+Could you please help me?
+I've heard that Mail Craft is an excellent tool. Would you recommend it?
+
+Best regards,
+
+John Beaver (also known as Johnny)
+66.66666666666667 884.0000000000001
+Hello,
+
+My name is John Beaver, and I'm having difficulty writing clear emails that express my thoughts in a natural manner. I'm reaching out for assistance in improving my email-writing skills.
+
+Could you provide some help with this? Additionally, I've heard that Mail Craft is excellent. Would you recommend it?
+
+Best regards,
+
+John
+62.666666666666664 946.6666666666667
+Hello,
+
+My name is John Beaver, and I find myself struggling to write clear emails that convey my intentions idiomatically. I'm reaching out for assistance in honing my email-writing skills.
+
+Could you help with this? Also, I've heard that Mail Craft is excellent. Would you recommend it?
+
+Best regards,
+
+John
+62.666666666666664 1009.3333333333334
+Hello,
+
+My name is John Beaver, and I'm having trouble writing clear emails that effectively convey my meaning. I'm reaching out for assistance to improve my email crafting skills. Could you help me with this? I've heard that Mail Craft is excellent. Would you recommend it?
+
+Best regards,
+
+John
+86.66666666666667 1096
+I apologize, but it seems there has been a misunderstanding. Your request indicates that you would like assistance in composing a speech in French; however, I am only able to assist in polishing English language content. If you have an email or text in English that you would like help with, please provide it, and I would be glad to assist you in improving it.
+82.66666666666667 1178.6666666666667
+Dear Thierry and Loïc,
+
+I hope this message finds you both well.
+
+I wanted to inquire if it would be acceptable for us to discontinue hosting the NOP application on our cloud, allowing you the opportunity to operate it during your acquisition of a commercial license.
+
+Would that be all right with you? Additionally, have you succeeded in obtaining a commercial solver license?
+
+Best regards,
+
+Louis
+69.33333333333333 1248
+Dear Thierry and Loïc,
+
+I hope you are both doing well.
+
+I wanted to inquire whether you still require the NOP application to be hosted on our cloud, or if we may proceed to discontinue it. Have you managed to secure a commercial solver license, or are there still additional runs needed?
+
+Thank you,
+
+Louis
+113.33333333333333 1361.3333333333333
+Dear Lapo and Max,
+
+I hope this email finds you both in good health.
+
+I have secured soft-locking until the 22nd of January with Product Development and arranged staffing from that date onwards.
+
+Lapo, I will arrange the travel to Geneva for this Thursday and will prepare a document to facilitate our discussions. I propose we cover the following agenda items:
+- Team introductions
+- Recap of the schedule, activities, and governance for the initial four weeks.
+
+Please let me know if there's anything else you'd like to discuss.
+
+Best regards,
+
+Louis
+97.33333333333333 1458.6666666666665
+Dear [Recipient Names],
+
+I hope this email finds you both in good health.
+
+I am writing to request your assistance in preparation for our Thursday meeting with XXX, where we aim to discuss the governance and workplan for Ocean Flows. Lapo mentioned that the pages you have created for Inland could serve as a good reference for us. Would you be amenable to sharing those with me?
+
+Thank you very much for your help.
+
+Best regards,
+
+Louis
+64 1522.6666666666665
+Hi,
+
+Thank you, Vale and Vincent.
+This sounds like a fantastic opportunity.
+
+@Team: I'm eager to offer insights on how we implemented VMX for asset network optimization at our utilities client in France, should it be pertinent to the client discussion.
+Please let me know how I can best contribute.
+
+Best regards,
+
+Louis
+70.66666666666667 1593.3333333333333
+Hi Vale and Vincent,
+
+I appreciate the opportunity – it sounds fantastic.
+
+To the team: I'm keen to offer insights on our deployment of VMX for asset network optimization at a utilities client in France if it's pertinent to our client discussions. Please let me know where my input would be most valuable.
+
+Best regards,
+
+Louis
+169.33333333333334 1762.6666666666665
+Hi Laszlo,
+
+Thank you very much for the update; it was super clear. I agree that starting with the basics makes perfect sense. How did the steering committee meeting go?
+
+Regarding DEOP, please let me know if you believe it would be practical to use it to size the full value at stake after mapping out the process and when you have a clear understanding of the current schedule. I believe it would be beneficial, as DEOP can be set up fairly quickly once we have the process outlined. We just need to list the steps and equipment in Excel. Additionally, we are seeking use-cases to beta-test our tool in various client settings.
+
+I am at your disposal should you wish to give it a try after the break.
+
+Best,
+
+Louis
+110.66666666666667 1873.3333333333333
+Dear Kapil and Team,
+
+As we discussed, our current process involves performing a database dump, which is not particularly convenient for those who may need to extract information at a later stage.
+
+It would be highly beneficial if we could develop a script that extracts data for all scenarios from the database and organizes it into a dedicated folder. The data to be extracted should include:
+- Input and output files
+- Input parameters
+- Charts in JSON format
+
+I look forward to your thoughts on this.
+
+Best regards,
+
+Louis
+161.33333333333334 2034.6666666666665
+Dear Team,
+
+I trust you are all doing well.
+
+I've recently spoken with Valerio, who emphasized the importance of integrating PlanAI tools such as VMX, DPO, and IMPro within APS as a key strategic focus for 2024. With this in mind, I am putting together a team—including you—to collaborate on developing the necessary capabilities and tooling to integrate our suite of planning solutions with APS. Our efforts will build upon the progress made with o9 and VMX and will extend to include other APS and PlanAI tools.
+
+Would you be interested in participating in this initiative? Additionally, who else should we consider involving to ensure our success?
+
+I plan to schedule a series of calls next year to maintain momentum on this project.
+
+Best regards,
+
+Louis
+130.66666666666666 2165.333333333333
+Global Logistics, pivotal to Bunge’s supply chain operations, enhances value by optimizing maritime transport and mitigating execution risks. The department is embracing digital tools and analytics, with three key initiatives (Polo Revamp, Stock Management, and Contract Management) progressing towards MVPs from October 2023 to April 2024. To hone its future strategy, Bunge aims to rapidly develop further projects including a Control Tower for comprehensive supply chain monitoring, and Mathematical Optimization for automated execution plans. The immediate goals for the coming months are to ensure the successful rollout of ongoing projects and to refine plans for these new initiatives.
+184 2349.333333333333
+Global Logistics is key to Bunge’s supply chain, managing ocean transportation and mitigating risks to optimize asset utilization and enhance value creation. The division is enhancing its processes through digitalization and analytics, working on three projects – Polo Revamp, Stock Management, and Contract Management – with minimum viable products expected between October 2023 and April 2024.
+
+To advance its vision and drive more value with agility, Bunge will assess and plan further initiatives like the Control Tower, a comprehensive alert system integrated with the supply chain to monitor execution risks and contract compliance, potentially including competitor vessel tracking. Additionally, mathematical optimization will be explored for automated execution planning, necessitating a thorough blueprint phase for scope definition.
+
+Over the next months, the priority is to deliver current projects and outline the future roadmap for the Optimization and Control Tower initiatives.
+81.33333333333333 2430.6666666666665
+Dear Colleagues,
+
+I hope this message finds you well. I am writing to kindly remind you to share the documents on governance and the workplan that you have prepared for the inland project. We believe there may be elements that could be applicable to our Ocean Flows project if you have any ready-made materials.
+
+Thank you very much for your assistance.
+
+Warm regards,
+
+Louis
+113.33333333333333 2544
+Dear Team,
+
+Attached is the first draft of the document for Thursday, which Marion and I have been working on.
+
+For our PS session later today, we propose the following agenda:
+- Confirm logistics for Thursday (arrival times, remote participation details, and the on-site contact's phone number)
+- Review content for Thursday (please refer to the attached document)
+- Discuss the staffing plan and WIP requirements (do we have a budget for an additional Asc or BA?)
+- Clarify the scope of Ocean Flows based on Edson's most recent document.
+
+Best,
+
+Louis
+45.333333333333336 2589.3333333333335
+Hi Lapo,
+
+I noticed your suggestion to reschedule our call for 16:30 ET; however, that translates to 22:30 CET, which is quite late here in Europe. Could you possibly offer an earlier timeslot?
+
+Many thanks,
+
+Louis
+46.666666666666664 2636
+Hi Lapo,
+
+I noticed your suggestion to reschedule our call for 16:30 ET; however, that would be 22:30 CET, which is rather late in Europe. Could you possibly offer an earlier timeslot?
+
+Thank you very much,
+
+Louis
+84 2720
+Hi Tay,
+
+I hope you've been well since our last meeting in Amsterdam last summer.
+
+Your extensive experience at XXX as a trader springs to mind, as I'm about to embark on a study with their ZZZ team, focusing on YYYY. Your insights on their operations would be invaluable to me. Would you be available for a chat before the holiday season begins?
+
+Warm regards,
+
+Louis
+61.333333333333336 2781.3333333333335
+Hi Edson,
+
+I hope this email finds you in good health.
+
+I have gone over the documents you provided and have some questions regarding the Ocean Flows. Could we schedule some time this week for you to guide me through the Ocean Flows use case specifically?
+
+Best regards,
+
+Louis
+40 2821.3333333333335
+Hello Thierry,
+
+Thank you very much for the update.
+Could you let me know what specifically is blocking the procurement of the solver license? Is there any assistance I can provide?
+
+Best,
+
+Louis
+260 3081.3333333333335
+Dear Marcio,
+
+Thank you for the insightful meeting we had earlier. 
+It was extremely helpful to walk through the decision log file with you and gain an understanding of the daily decisions your team makes during "re-planning."
+
+Following our discussion, I have scheduled the following:
+(i) Two touchpoints on Tuesday, 16/01, and Thursday, 18/01, to review the work plan and ensure all logistics are set for the 22/01 kick-off.
+(ii) Weekly touchpoints with you every Thursday at 2 pm.
+(iii) The kick-off meeting with your team on Monday, 22/01, at 10:30 am.
+
+Could I ask you to:
+- Forward the kick-off invitation to your team?
+- Schedule a 2-hour final review on Thursday, 15/02, with Christos?
+- Send us the decision log Excel files that we discussed during our meeting. We would like to review them to be fully prepared for the 22/01 start date.
+
+I will provide you with the names of the team members who will be joining us on the 22/01 as soon as our list is finalized, so you can arrange badges and chairs for them.
+
+We will update the work plan based on our discussion today and will review it together on Tuesday, 16/01.
+
+Wishing you a joyous holiday season.
+
+Best regards,
+
+Louis
+122.66666666666667 3204
+Hi Elizabeta,
+
+Thank you very much for your assistance. 
+
+Following our discussion with leadership and the client yesterday, we've determined that we're looking for candidates with:
+- Strong analytical capabilities, such as proficiency with numbers
+- Excellent interpersonal skills to foster robust client relationships
+- Being local would be highly advantageous
+
+Currently, I notice there's just one profile in the Geneva office (excluding XXX, as he is already a JEM and likely more suited for a BA/Associate role). 
+Could you provide additional profiles that match the criteria mentioned above?
+
+Thank you once again for your help.
+
+Best regards,
+
+Louis
+120 3324
+Dear Max and Marion,
+
+I am on the hunt for the ideal consultant to come on board with our team by 22/01. I have compiled a list of potential candidates and shared their profiles via the following Box link: [LINK]. Could you please take an initial look and mark any prospects that stand out?
+
+I have also been in touch with PD to emphasize the need for candidates with robust analytical skills and exceptional interpersonal abilities. I will continue to update the list with new profiles as they come in.
+
+Best regards,
+
+Louis
+192 3516
+Bonjour Violaine,
+
+Je me permets de vous contacter car Anne-Louise Talbot vous a identifié comme un sponsor/mentor clé ayant une grande visibilité.
+Pourriez-vous prendre, s'il vous plaît, 30 secondes pour partager votre retour avec moi ce soir. Ce serait vraiment utile.
+Contexte : Phase de conception de l'optimisation logistique pour une entreprise agricole – une bonne relation client et d'excellentes compétences analytiques sont requises. Enjeu important ; configuration EM+1 ; nous recherchons un(e) consultant(e) junior/analyste d'affaires.
+
+Questions :
+Quelle est la nature de la relation client (par exemple, établir des relations de confiance avec les clients) ?
+Quel est le niveau des compétences analytiques (traitement de données, modélisation Excel) ?
+Souhaiteriez-vous retravailler avec cette personne/la réaffecter à un projet ? Quelle serait votre évaluation ?
+Quelles sont les connaissances en chaîne d'approvisionnement/logistique ?
+
+Merci beaucoup – votre aide est vraiment précieuse 😊
+
+Je vous souhaite de passer d'excellentes fêtes de fin d'année !
+
+Louis
+56 3572
+Dear [Sender's Name],
+
+Thank you for your message.
+
+Please note that I am currently out of the office and will reply to your email upon my return on January 3rd.
+
+Wishing you a wonderful Christmas and a fantastic start to the new year!
+
+Best regards,
+Louis
+50.666666666666664 3622.6666666666665
+Dear Serge,
+
+I am a founder with an exciting business idea. I'm currently seeking assistance with fundraising and I'm also in need of a lawyer. Could you provide me with some support or guidance in these matters?
+
+Best regards,
+
+Louis
+#+end_example
+
+** Test
+
+#+begin_src js :results value pp
+class Rectangle {
+    constructor(width, length) {
+        this.width = width;
+        this.length = length
+    }
+    test() {
+        throw new Error('not implemented');
+    }   
+}
+class Square extends Rectangle {
+    constructor(size) {
+        super(size, size);
+    }
+    // test() {
+    //     console.log('Implemented');
+    // }
+}
+
+square = new Square(3);
+square.test();
+
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src js :results value pp
+const foo = () => {
+    const res = {
+        hello: "hello",
+        world: "world"
+    };
+    return res
+}
+const {hello, world} = foo();
+console.log("hello", hello),
+console.log("world", world);
+#+end_src
+
+#+RESULTS:
+: hello hello
+: world world
+: undefined
