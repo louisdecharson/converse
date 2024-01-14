@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3');
 const path = require('path');
 
 class Table {
-    constructor(database, filename, createQuery, tableName) {
+    constructor(database, createQuery, tableName) {
         this.db = database;
         this.createQuery = createQuery;
         this.tableName = tableName;
@@ -75,10 +75,13 @@ class HistoryTable extends Table {
     CREATE TABLE IF NOT EXISTS HISTORY (
         timestamp DATETIME,
         model TEXT,
-        model_provider TEXT,
-        prompt_instructions TEXT,
-        user_content TEXT,
-        response TEXT
+        modelProvider TEXT,
+        promptInstructions TEXT,
+        userContent TEXT,
+        response TEXT,
+        promptTokens INTEGER,
+        completionTokens INTEGER,
+        totalTokens INTEGER
     );
 `;
         super(database, createHistoryTableQuery, 'HISTORY');
@@ -113,24 +116,17 @@ class InstructionsTable extends Table {
     constructor(database) {
         const createInstructionsTableQuery = `
     CREATE TABLE IF NOT EXISTS INSTRUCTIONS (
-        dateCreated DATETIME
+        createdAt DATETIME,
         name TEXT,
-        prompt_instructions TEXT,
-        actionName TEXT,
-        description TEXT
+        promptInstructions TEXT,
+        actionName TEXT
     );
 `;
         super(database, createInstructionsTableQuery, 'INSTRUCTIONS');
     }
-    insert(name, promptInstructions, actionName, description) {
+    insert(name, promptInstructions, actionName) {
         const timestamp = new Date().toISOString();
-        super.insert(
-            timestamp,
-            name,
-            promptInstructions,
-            actionName,
-            description
-        );
+        super.insert(timestamp, name, promptInstructions, actionName);
     }
 }
 

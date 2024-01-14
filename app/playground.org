@@ -35,7 +35,9 @@ _History_:
 #+end_src
 
 #+RESULTS:
-: ./node_modules:/Users/Louis_de_Charsonville./node_modules:
+: ./node_modules:./node_modules:/Users/Louis_de_Charsonville./node_modules:
+
+
 
 ** Snippets
 
@@ -492,7 +494,6 @@ Louis
 #+end_example
 
 ** Test
-
 #+begin_src js :results value pp
 class Rectangle {
     constructor(width, length) {
@@ -537,3 +538,41 @@ console.log("world", world);
 : hello hello
 : world world
 : undefined
+
+#+begin_src js :results value pp
+
+const longFunction = () => {
+  console.log("Waiting...");
+  return new Promise(
+    (resolve) => {
+      setTimeout(() => {
+        console.log("Hello !!");
+        resolve("Hello world");
+      }, 1000);
+    })
+};
+const callingLongFunction1 = async () => {
+  const myResponse = await longFunction();
+  console.log("Done - 1");
+  return "Done.";
+}
+
+const callingLongFunction2 = () => {
+  const myResponse = longFunction();
+  console.log("Done - 2");
+  return "Done";
+}
+
+// callingLongFunction1().then((res) => console.log(res));
+console.log(callingLongFunction2());
+
+#+end_src
+
+#+RESULTS:
+: Waiting...
+: Done - 2
+: Done
+: undefinedHello !!
+
+
+** 

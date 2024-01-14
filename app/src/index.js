@@ -7,10 +7,13 @@ const { promptInstructions, openAIGPTModel } = require('./config.js');
 const { HistoryTable, InstructionsTable } = require('./db.js');
 
 const store = new Store(); // store user preferences
-const dbPath = path.join(app.getPath('userData'), 'history.db');
+// const dbPath = path.join(app.getPath('userData'), 'history.db');
+const dbPath = 'dev.db';
 const database = new sqlite3.Database(dbPath);
 const chatHistory = new HistoryTable(database); // store chat history
 const chatInstructions = new InstructionsTable(database); // store user configuration
+
+const serviceURL = 'localhost:3000';
 
 // Set defaults
 if (store.get('settings:gpt-model') === undefined) {
