@@ -7,6 +7,7 @@ const { promptInstructions, openAIGPTModel } = require('./config.js');
 const { HistoryTable, InstructionsTable } = require('./db.js');
 
 const store = new Store(); // store user preferences
+
 // const dbPath = path.join(app.getPath('userData'), 'history.db');
 const dbPath = 'dev.db';
 const database = new sqlite3.Database(dbPath);
@@ -15,22 +16,19 @@ const chatInstructions = new InstructionsTable(database); // store user configur
 
 const serviceURL = 'localhost:3000';
 
-// Set defaults
-if (store.get('settings:gpt-model') === undefined) {
-    store.set('settings:gpt-model', openAIGPTModel);
-}
-if (store.get('settings:prompt-instructions') === undefined) {
-    store.set('settings:prompt-instructions', promptInstructions);
-}
-
-const getSettings = () => {
-    let currentSettings = {
-        openAIAPIKey: store.get('settings:openai-api-key'),
-        mistralAIAPIKey: store.get('settings:mistralai-api-key'),
-        promptInstructions: store.get('settings:prompt-instructions'),
-        aiModel: store.get('settings:ai-model')
+const getLicense = () => {
+    return {
+        userId: store.set('settings:user-id'),
+        userLicense: store.set('settings:user-license')
+        // defaultConfigName: store.set('settings:default-config-name')
     };
-    return currentSettings;
+};
+const getSettings = () => {
+    return {
+        userId: store.set('settings:user-id'),
+        userLicense: store.set('settings:user-license'),
+        defaultConfigName: store.set('settings:default-config-name')
+    };
 };
 
 const createWindow = () => {
@@ -44,12 +42,16 @@ const createWindow = () => {
         show: false
     });
 
-    // check if we have any API key
-    if (
-        store.get('settings:openai-api-key') === undefined ||
-        store.get('settings:mistralai-api-key') === undefined
-    ) {
-        mainWindow.webContents.send('settings:view', getSettings(), true);
+    // check if the user has license
+    if (store.get('settings:user-license') === undefined) {
+        mainWindow.webContents.send(
+            'license:view',
+            {
+                userId: store.get('settings:user-id'),
+                userLicense: store.get('settings:user-license')
+            },
+            true
+        );
     }
 
     const viewChatHistory = (toggle = false) => {
@@ -169,10 +171,9 @@ const createWindow = () => {
     });
 
     viewChatHistory(false);
+
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-    // send history
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();

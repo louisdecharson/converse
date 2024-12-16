@@ -39,4 +39,5 @@ model Config {
   name String @unique
   promptInstructions String
   actionName String @default("Beautify Text")
+  promptHidden Boolean @default(true)
 }

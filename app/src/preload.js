@@ -11,6 +11,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
             (_event, settings, showWelcomeMessage) =>
                 callback(settings, showWelcomeMessage)
         ),
+    viewLicense: (callback) =>
+        ipcRenderer.on(
+            'license:view',
+            (_event, currentLicense, showLicenseScreen) =>
+                callback(currentLicense, showLicenseScreen)
+        ),
     setSettings: (settings) => ipcRenderer.send('settings:set', settings),
     viewHistory: (callback) =>
         ipcRenderer.on('history:send', (_event, chatHistory, toggle) =>

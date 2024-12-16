@@ -55,6 +55,9 @@ document
         }
     });
 
+// License interactions
+window.electronAPI.viewLicense((licenseInfo) => {});
+
 // Settings interactions
 const setSettings = (settings) => {
     document.getElementById('openai-apiKey').value = settings['openAIAPIKey'];

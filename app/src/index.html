@@ -173,6 +173,102 @@
             <div
                 class="bg-white p-8 rounded-lg shadow-md w-3/4 dark:bg-neutral-800"
             >
+                <h2 class="text-xl font-semibold mb-4 dark:text-neutral-200">
+                    Settings
+                </h2>
+
+                <!-- Form -->
+                <form id="settings">
+                    <!-- OpenAI API Key -->
+                    <div class="mb-4">
+                        <label
+                            for="openai-apiKey"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >OpenAI API Key</label
+                        >
+                        <input
+                            type="text"
+                            id="openai-apiKey"
+                            name="openai-apiKey"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-neutral-700 dark:text-white"
+                        />
+                    </div>
+                    <!-- MistralAI API Key -->
+                    <div class="mb-4">
+                        <label
+                            for="mistralai-apiKey"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >MistralAI API Key</label
+                        >
+                        <input
+                            type="text"
+                            id="mistralai-apiKey"
+                            name="mistralai-apiKey"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-neutral-700 dark:text-white"
+                        />
+                    </div>
+
+                    <!-- AI Models Dropdown -->
+                    <div class="mb-4">
+                        <label
+                            for="aiModels"
+                            class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                            >AI Model</label
+                        >
+                        <select
+                            id="aiModels"
+                            name="aiModels"
+                            class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:text-white dark:bg-neutral-700"
+                        >
+                            <option value="gpt-4-1106-preview">GPT-4</option>
+                            <option value="gpt-3.5-turbo-1106">GPT-3.5</option>
+                            <option value="mistral-tiny">MistralAI tiny</option>
+                        </select>
+                    </div>
+
+                    <!-- Prompt Instructions -->
+                    <details class="mb-4" id="advanced-settings">
+                        <summary class="dark:text-gray-200 mb-2">
+                            Advanced settings
+                        </summary>
+                        <div>
+                            <label
+                                for="promptInstructions"
+                                class="block text-sm font-medium text-gray-600 dark:text-gray-400"
+                                >Prompt Instructions</label
+                            >
+                            <textarea
+                                id="promptInstructions"
+                                name="promptInstructions"
+                                rows="4"
+                                class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500 dark:bg-neutral-700 dark:text-white"
+                            ></textarea>
+                        </div>
+                    </details>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="bg-blue-500 w-40 text-white text-sm p-1 rounded-lg focus:outline-none focus:ring"
+                    >
+                        Save
+                    </button>
+                    <button
+                        id="cancel-view-settings"
+                        class="ml-1 w-40 text-blue-500 border-blue-500 border text-sm p-1 rounded-lg focus:outline-none focus:ring"
+                    >
+                        Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div
+            id="license-window"
+            class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
+        >
+            <div
+                class="bg-white p-8 rounded-lg shadow-md w-3/4 dark:bg-neutral-800"
+            >
                 <div
                     id="welcome"
                     class="mb-4 rounded-lg bg-neutral-200 p-4 hidden dark:bg-neutral-700"
@@ -184,30 +280,14 @@
                     </h2>
                     <div class="dark:text-gray-300">
                         <p>
-                            To use Craft Mail, you will need an API key from
-                            either
-                            <a
-                                class="text-blue-500 hover:text-blue-700 transition duration-300 ease-in-out"
-                                href="https://platform.openai.com/signup"
-                                >OpenAI</a
-                            >
-                            or
-                            <a
-                                class="text-blue-500 hover:text-blue-700 transition duration-300 ease-in-out"
-                                href="https://console.mistral.ai/"
-                                >MistralAI</a
-                            >.
-                        </p>
-                        <p>
-                            Craft Email will make request to OpenAI or MistralAI
-                            API servers based on the AI Model you choose in the
-                            settings.
+                            To use Craft Mail, you will need a license, get one
+                            at <a id="app-url-get-license" href=""></a>
                         </p>
                     </div>
                 </div>
 
                 <h2 class="text-xl font-semibold mb-4 dark:text-neutral-200">
-                    Settings
+                    License information
                 </h2>
 
                 <!-- Form -->

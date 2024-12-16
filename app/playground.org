@@ -1,3 +1,12 @@
+* Desktop App - User journey
+
+_Journey_
+1. Check if there is license
+2. Sync local config with cloud config
+
+Local storage
+- license
+
 * Tasks
 
 + [ ] Create migration script

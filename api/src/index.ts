@@ -122,7 +122,7 @@ app.get(
                 httpOnly: true,
                 maxage: 7 * 86400
             });
-            return `Sign is as ${cookie.auth}`;
+            return `Signed in as ${cookie.auth}`;
         }
         set.status = 401;
         return 'Unknown user';
