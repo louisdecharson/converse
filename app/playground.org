@@ -501,7 +501,10 @@ class Rectangle {
     }
     test() {
         throw new Error('not implemented');
-    }   
+    }
+    print() {
+        console.log("width", this.width, "length", this.length)
+    }
 }
 class Square extends Rectangle {
     constructor(size) {
@@ -513,11 +516,13 @@ class Square extends Rectangle {
 }
 
 square = new Square(3);
-square.test();
+square.print();
 
 #+end_src
 
 #+RESULTS:
+: width 3 length 3
+: undefined
 
 
 #+begin_src js :results value pp
@@ -537,3 +542,55 @@ console.log("world", world);
 : hello hello
 : world world
 : undefined
+
+
+#+begin_src js
+class localHistory {
+    constructor(history) {
+        this.maxNbItems = 15; // initial history table
+        this.array = history // JS array of the history sql table
+        this.htmlTable = document.getElementById('chat-history-table');
+        this.displayedItems = new Set(); // set of items added on the html table
+    }
+    addItem(text, response, model, promptInstructions) {
+        this.array.push(
+            {"user_content": text,
+             "response": response,
+             "model": model,
+             "promptInstructions": promptInstructions
+        })
+    }
+    loadMore() {
+        nbChatHistoryItems += 10;
+        this.array = await window.electronAPI.viewMoreHistory(nbChatHistoryItems);
+        this.displayTable()
+    }
+    displayTable() {
+        for (let i = 0; i < this.array.length; i++) {
+            const item = this.array[i];
+            const itemId = `chat-${i}`;
+            if (!this.displayedItems.has(itemId)) {
+                this.displayItem(item);
+                this.displayedItems.add(displayItem);
+            }
+        }
+    }
+    displayItem(item) {
+        const snippet = processString(item.user_content, 40)
+        const newRow = this.htmlTable.insertRow(0);
+         // Set the background color based on the row index
+         newRow.className = 'mb-2';
+
+         // Add a cell to the row
+         var cell = newRow.insertCell(0);
+         cell.className = `cursor-pointer p-1 border-b border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
+         cell.textContent = snippet;
+         cell.addEventListener('click', () => {
+             document.getElementById('text-input').value = item.user_content;
+             showElement('output');
+             document.getElementById('output-text').innerText = item.response;
+         });
+    }
+
+}
+#+end_src

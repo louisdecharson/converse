@@ -7,7 +7,8 @@ const { promptInstructions, openAIGPTModel } = require('./config.js');
 const { HistoryTable, InstructionsTable } = require('./db.js');
 
 const store = new Store(); // store user preferences
-const dbPath = path.join(app.getPath('userData'), 'history.db');
+const dbPath = path.join(app.getPath('userData'), 'history_new.db');
+console.log('dbPath: ', dbPath);
 const database = new sqlite3.Database(dbPath);
 const chatHistory = new HistoryTable(database); // store chat history
 const chatInstructions = new InstructionsTable(database); // store user configuration
@@ -59,6 +60,7 @@ const createWindow = () => {
                 }
             },
             {},
+            false,
             15
         );
     };
@@ -189,7 +191,7 @@ app.whenReady().then(() => {
             const prompInstructions = store.get('settings:prompt-instructions');
             const {
                 aiModelProvider,
-                textReponse,
+                textResponse,
                 promptTokens,
                 completionTokens,
                 totalTokens
@@ -201,13 +203,17 @@ app.whenReady().then(() => {
                 text
             );
             chatHistory.insert(
+                'user',
                 model,
                 aiModelProvider,
                 promptInstructions,
                 text,
-                textReponse
+                textResponse,
+                promptTokens,
+                completionTokens,
+                totalTokens
             );
-            return textReponse;
+            return textResponse;
         } catch (error) {
             console.log(error);
             throw new Error(error.message);
@@ -218,8 +224,13 @@ app.whenReady().then(() => {
         return 'apikey set';
     });
     ipcMain.handle('history:view-more', async (event, limit) => {
-        const rows = await asyncWrapper(chatHistory, 'findMany', {}, limit);
-        console.log(rows.length);
+        const rows = await asyncWrapper(
+            chatHistory,
+            'findMany',
+            {},
+            false,
+            limit
+        );
         return rows;
     });
     createWindow();

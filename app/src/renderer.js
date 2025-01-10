@@ -15,7 +15,6 @@ const enableElement = (id) => {
 
 const settingsWindow = document.getElementById('settings-window');
 const mainWindow = document.getElementById('main-window');
-const localChatHistory = {};
 
 document
     .getElementById('text-form')
@@ -40,7 +39,7 @@ document
             enableElement('submit');
             hideElement('loading-spinner');
             // add to history
-            addItemToLocalHistory(
+            localHistory.addItem(
                 text,
                 response,
                 document.getElementById('aiModels').value,
@@ -156,73 +155,66 @@ document.getElementById('toggle-sidebar').addEventListener('click', () => {
 });
 
 // Chat history
-const addItemToLocalHistory = (
-    user_content,
-    response,
-    aiModel,
-    promptInstructions
-) => {
-    const chatItemNum = Object.keys(localChatHistory).length + 1;
-    const chatItemId = `chat-${chatItemNum}`;
-    localChatHistory[chatItemId] = {
-        user_content: user_content,
-        response: response,
-        aiModel: aiModel,
-        promptInstructions: promptInstructions
-    };
-    addRow(processString(user_content, 40), user_content, response);
-};
+class LocalHistory {
+    constructor(history) {
+        this.maxNbItems = 15; // initial history table
+        this.array = history; // JS array of the history sql table
+        this.htmlTable = document.getElementById('chat-history-table');
+        this.displayedItems = new Set(); // set of items added on the html table
+    }
+    addItem(text, response, model, promptInstructions) {
+        this.array.push({
+            user_content: text,
+            response: response,
+            model: model,
+            promptInstructions: promptInstructions
+        });
+        this.displayTable();
+    }
+    async loadMore() {
+        nbChatHistoryItems += 10;
+        this.array =
+            await window.electronAPI.viewMoreHistory(nbChatHistoryItems);
+        this.displayTable();
+    }
+    displayTable() {
+        for (let i = 0; i < this.array.length; i++) {
+            const item = this.array[i];
+            const itemId = `chat-${i}`;
+            if (!this.displayedItems.has(itemId)) {
+                this.displayItem(item);
+                this.displayedItems.add(itemId);
+            }
+        }
+    }
+    displayItem(item) {
+        const snippet = processString(item.user_content, 40);
+        const newRow = this.htmlTable.insertRow(0);
+        // Set the background color based on the row index
+        newRow.className = 'mb-2';
+
+        // Add a cell to the row
+        var cell = newRow.insertCell(0);
+        cell.className = `cursor-pointer p-1 border-b border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
+        cell.textContent = snippet;
+        cell.addEventListener('click', () => {
+            document.getElementById('text-input').value = item.user_content;
+            showElement('output');
+            document.getElementById('output-text').innerText = item.response;
+        });
+    }
+}
+localHistory = new LocalHistory([]);
 window.electronAPI.viewHistory((chatHistory, toggle) => {
     if (!historyAlreadyLoaded) {
-        for (let i = chatHistory.length - 1; i > -1; i--) {
-            const chatItem = chatHistory[i];
-            addItemToLocalHistory(
-                chatItem['user_content'],
-                chatItem['response'],
-                chatItem['model'],
-                chatItem['prompt_instructions']
-            );
-        }
+        localHistory.array = chatHistory;
+        localHistory.displayTable();
         historyAlreadyLoaded = true;
     }
     if (toggle) {
         toggleSidebar();
     }
 });
-
-function addRow(snippet, content, response) {
-    // Get the table body
-    const tableBody = document.getElementById('chat-history-table');
-
-    // Create a new row
-    // var newRow = tableBody.insertRow(tableBody.rows.length);
-    const newRow = tableBody.insertRow(0);
-
-    // Set the background color based on the row index
-    newRow.className = 'mb-2';
-
-    // Add a cell to the row
-    var cell = newRow.insertCell(0);
-    cell.className = `cursor-pointer p-1 border-b border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-600`;
-    cell.textContent = snippet;
-    cell.addEventListener('click', () => {
-        document.getElementById('text-input').value = content;
-        showElement('output');
-        document.getElementById('output-text').innerText = response;
-    });
-}
-
-const processString = (inputString, maxLength) => {
-    // Replace non-visible characters
-    var sanitizedString = inputString.replace(/[\x00-\x1F\x7F-\x9F]/g, ' ');
-
-    // Shorten the string if it exceeds the maximum length
-    if (sanitizedString.length > maxLength) {
-        sanitizedString = sanitizedString.substring(0, maxLength - 3) + '...';
-    }
-
-    return sanitizedString;
-};
 
 const taskbar = document.getElementById('taskbar');
 document.addEventListener('scroll', () => {
@@ -240,19 +232,18 @@ let nbChatHistoryItems = 15;
 document
     .getElementById('history-load-more')
     .addEventListener('click', async () => {
-        nbChatHistoryItems += 10;
-        const chatHistory =
-            await window.electronAPI.viewMoreHistory(nbChatHistoryItems);
-        console.log('history', chatHistory);
-        const tableBody = document.getElementById('chat-history-table');
-        tableBody.innerHTML = '';
-        for (let i = chatHistory.length - 1; i > -1; i--) {
-            const chatItem = chatHistory[i];
-            addItemToLocalHistory(
-                chatItem['user_content'],
-                chatItem['response'],
-                chatItem['model'],
-                chatItem['prompt_instructions']
-            );
-        }
+        localHistory.loadMore();
     });
+
+// utils
+const processString = (inputString, maxLength) => {
+    // Replace non-visible characters
+    var sanitizedString = inputString.replace(/[\x00-\x1F\x7F-\x9F]/g, ' ');
+
+    // Shorten the string if it exceeds the maximum length
+    if (sanitizedString.length > maxLength) {
+        sanitizedString = sanitizedString.substring(0, maxLength - 3) + '...';
+    }
+
+    return sanitizedString;
+};

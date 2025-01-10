@@ -18,11 +18,11 @@ const craftEmail = async (
     } else {
         throw new Error('Model unknown');
     }
-    const { textReponse, promptTokens, completionTokens, totalTokens } =
+    const { textResponse, promptTokens, completionTokens, totalTokens } =
         await model.chatCompletion(text);
     return {
         aiModelProvider,
-        textReponse,
+        textResponse,
         promptTokens,
         completionTokens,
         totalTokens

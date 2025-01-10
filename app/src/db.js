@@ -2,13 +2,13 @@ const sqlite3 = require('sqlite3');
 const path = require('path');
 
 class Table {
-    constructor(database, filename, createQuery, tableName) {
+    constructor(database, createQuery, tableName) {
         this.db = database;
         this.createQuery = createQuery;
         this.tableName = tableName;
         this.db.run(this.createQuery, (err) => {
             if (err) {
-                console.log(
+                console.error(
                     `Error when creating the database ${this.tableName}:`,
                     err.message
                 );
@@ -22,7 +22,7 @@ class Table {
             { length: args.length },
             () => '?'
         ).join(', ');
-        const insertQuery = $`
+        const insertQuery = `
         INSERT INTO ${this.tableName} VALUES (${placeholders})`;
         this.db.run(insertQuery, args, (err) => {
             if (err) {
@@ -55,7 +55,6 @@ class Table {
         ${whereClause ? `WHERE ${whereClause}` : ''}
         ${orderByClause} LIMIT ${limit};
     `;
-
         // Execute the select query with the provided filter values
         this.db.all(selectQuery, Object.values(filters), (err, rows) => {
             if (err) {
@@ -72,14 +71,18 @@ class Table {
 class HistoryTable extends Table {
     constructor(database) {
         const createHistoryTableQuery = `
-    CREATE TABLE IF NOT EXISTS HISTORY (
+        CREATE TABLE IF NOT EXISTS HISTORY (
         timestamp DATETIME,
+        user TEXT,
         model TEXT,
         model_provider TEXT,
         prompt_instructions TEXT,
         user_content TEXT,
-        response TEXT
-    );
+        response TEXT,
+        prompt_tokens INTEGER,
+        completion_tokens INTEGER,
+        total_tokens INTEGER
+        );
 `;
         super(database, createHistoryTableQuery, 'HISTORY');
     }
@@ -112,13 +115,13 @@ class HistoryTable extends Table {
 class InstructionsTable extends Table {
     constructor(database) {
         const createInstructionsTableQuery = `
-    CREATE TABLE IF NOT EXISTS INSTRUCTIONS (
+        CREATE TABLE IF NOT EXISTS INSTRUCTIONS (
         dateCreated DATETIME
         name TEXT,
         prompt_instructions TEXT,
         actionName TEXT,
         description TEXT
-    );
+        );
 `;
         super(database, createInstructionsTableQuery, 'INSTRUCTIONS');
     }

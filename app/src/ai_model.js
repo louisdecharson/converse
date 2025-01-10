@@ -22,12 +22,11 @@ class AIModel {
         return this.response.usage.total_tokens;
     }
     async chatCompletion(text) {
-        this.response = await this.requestAPI(text);
+        await this.requestAPI(text);
         const textResponse = this.getTextResponse();
         const promptTokens = this.getPromptTokens();
         const completionTokens = this.getCompletionTokens();
         const totalTokens = this.getTotalTokens();
-
         return {
             textResponse: textResponse,
             promptTokens: promptTokens,
@@ -70,7 +69,7 @@ class MistralModel extends AIModel {
     constructor(model, apiKey, promptInstructions) {
         super(model, apiKey, promptInstructions);
     }
-    async chatCompletion(text) {
+    async requestAPI(text) {
         try {
             const response = await fetch(
                 'https://api.mistral.ai/v1/chat/completions',
@@ -103,8 +102,7 @@ class MistralModel extends AIModel {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}.`);
             }
-            const data = await response.json();
-            this.response = data.choices[0].message.content;
+            this.response = await response.json();
         } catch (error) {
             // Handle errors here
             console.error('Error:', error);
