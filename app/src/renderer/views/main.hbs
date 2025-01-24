@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {{> header }}
+    </head>
+    <body>
+        <main class="flex flex-col min-h-screen bg-white dark:bg-neutral-800">
+            <div
+                id="popup-confirmation-delete"
+                class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
+            >
+                <div
+                    class="bg-white px-8 py-4 rounded-lg shadow-md dark:bg-neutral-800 flex flex-col text-sm"
+                >
+                    <p class="flex flex-1 mb-8 dark:text-gray-100">
+                        Are you sure you want to delete the task
+                        <span
+                            id="delete-task-name"
+                            class="px-1 font-bold"
+                        ></span>
+                        ?
+                    </p>
+                    <div class="space-x-2 text-center" style="height: 30px">
+                        <button
+                            id="cancel-delete"
+                            class="native-button native-white-button"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="confirm-delete"
+                            type="button"
+                            class="bg-red-500 dark:bg-red-600 text-white dark:text-gray-100 native-button"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="pl-10 font-bold flex header-bar">Tasks</div>
+            <div
+                class="pl-10 bg-gray-100 text-gray-700 dark:bg-neutral-700 dark:text-gray-300 text-sm text-left flex items-center border-t border-gray-200 dark:border-gray-500"
+                id="header-bar"
+                style="height: 30px"
+            >
+                <button
+                    class="transparent-button selected"
+                    id="tasks-select-all"
+                >
+                    All
+                </button>
+                <button class="transparent-button" id="tasks-select-pinned">
+                    Pinned
+                </button>
+            </div>
+            <div
+                id="content"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 bg-white dark:bg-neutral-800 p-4 pl-10 items-start overflow-auto"
+            >
+                {{#each tasks}} {{> task_card task=. }} {{/each}}
+            </div>
+            <div class="flex-grow"></div>
+            <div
+                class="pl-10 bg-white dark:bg-neutral-800 text-left flex items-center border-t border-gray-100 dark:border-neutral-700"
+                style="height: 40px"
+            >
+                <button class="native-button native-white-button">
+                    <a href="/create_task">Create task</a>
+                </button>
+            </div>
+        </main>
+        <script src="../renderer_main.js"></script>
+    </body>
+</html>

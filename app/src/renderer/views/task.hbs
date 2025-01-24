@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Craft</title>
+    <link rel="stylesheet" href="../output.css" />
+  </head>
+  <body class="bg-white dark:bg-neutral-800">
+    <div id="main-window">
+      <div
+          id="sidebar"
+          class="fixed left-0 top-0 w-0 overflow-x-hidden h-full bg-gray-200 transition-all text-sm duration-100 ease-in-out dark:bg-neutral-600"
+      >
+        <div
+            class="my-2 ml-2 text-sm font-bold text-gray-600 dark:text-gray-300"
+        >
+          History
+        </div>
+        <table style="width: 190px" class="m-auto dark:bg-neutral-600">
+          <tbody
+              id="chat-history-table"
+              class="p-1 overflow-y-auto"
+          ></tbody>
+        </table>
+        <div class="w-full flex items-center">
+          <button
+              id="history-load-more"
+              class="p-1 m-2 text-gray-600 bg-gray-200 dark:bg-neutral-600 w-full dark:text-neutral-300 rounded"
+          >
+            Load more...
+          </button>
+        </div>
+      </div>
+      <div
+          id="main-container"
+          class="ml-0 transition-all duration-100 ease-in-out"
+      >
+        <div
+            id="taskbar"
+            class="sticky w-full top-0 header-bar flex justify-between items-center z-10 border-gray-300 dark:border-neutral-600"
+        >
+          <button
+              id="toggle-sidebar"
+              class="hover:bg-gray-200 ml-2 py-1 px-2 rounded dark:hover:bg-neutral-700"
+              title="View chat history"
+          >
+            <svg
+                fill="#6B6C6D"
+                width="24px"
+                height="24px"
+                viewBox="0 0 1.68 1.68"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                  d="M0.231 1.487h1.217c0.147 0 0.221 -0.073 0.221 -0.218V0.411c0 -0.145 -0.074 -0.218 -0.221 -0.218H0.231C0.085 0.193 0.011 0.265 0.011 0.411V1.269c0 0.146 0.075 0.218 0.221 0.218Zm0.002 -0.113c-0.07 0 -0.11 -0.037 -0.11 -0.11V0.416c0 -0.073 0.039 -0.11 0.11 -0.11h0.313v1.068Zm1.213 -1.068c0.07 0 0.11 0.037 0.11 0.11V1.264c0 0.073 -0.04 0.11 -0.11 0.11h-0.79V0.306Zm-1.035 0.261c0.021 0 0.04 -0.019 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.02 0.018 0.039 0.039 0.039Zm0 0.182c0.021 0 0.04 -0.019 0.04 -0.04 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.021 0.018 0.04 0.039 0.04Zm0 0.181c0.021 0 0.04 -0.018 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039s0.018 0.039 0.039 0.039Z"
+              />
+            </svg>
+          </button>
+          <h1
+              id="app-title"
+              class="text-base text-center dark:text-neutral-200 font-bold text-sm text-gray-700"
+              data-taskid="{{task.rowid}}"
+          >
+            {{ task.name }}
+          </h1>
+          <button
+              id="view-all-tasks-button"
+              class="native-button native-white-button whitespace-nowrap mx-2"
+          >
+            <a href="/"> View all tasks </a>
+          </button>
+        </div>
+        <div
+            id="main-content"
+            class="px-4 py-3 bg-white dark:bg-neutral-800"
+        >
+          <div id="model-selector" class="text-sm mt-3">
+            <button
+                class="native-button native-white-button"
+                id="display-instructions"
+            >
+              Show Prompt Instructions
+            </button>
+            <label
+                for="provider-select"
+                class="text-gray-700 dark:text-gray-300 ml-2"
+            >Provider:</label
+                      >
+            <select
+                name="provider"
+                id="provider-select"
+                class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
+                data-default="{{task.default_provider}}"
+            ></select>
+            <label
+                for="model-select"
+                class="text-gray-700 dark:text-gray-300 ml-2"
+            >Model:</label
+                   >
+            <select
+                name="model"
+                id="model-select"
+                class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
+                data-default="{{task.default_model}}"
+            ></select>
+          </div>
+          <div
+              id="prompt-instructions-container"
+              class="mt-2 text-gray-700 bg-gray-100 dark:bg-neutral-700 dark:text-gray-300 p-2"
+          >
+            <h3
+                class="text-gray-700 dark:text-gray-300 font-semibold text-sm"
+            >
+              Prompt instructions
+            </h3>
+            <textarea
+                class="text-sm text-left text-gray-700 bg-gray-100 dark:bg-neutral-700 dark:text-gray-300"
+                style="height: auto; overflow: hidden"
+                id="prompt-instructions"
+            >
+              {{ task.prompt_instructions }}
+            </textarea>
+          </div>
+          {{#if task.chat_mode}}
+              {{> chat_mode}}
+          {{else}}
+              {{> text_mode}}
+          {{/if}}
+          <div id="error" class="text-rose-600 italic"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../renderer_task.js"></script>
+    <script src="../history.js"></script>
+    <script src="../model_selection.js"></script>
+    {{#if task.chat_mode}}
+      <script src="../renderer_chat_mode.js"></script>
+    {{else}}
+      <script src="../renderer_text_mode.js"></script>
+    {{/if}}
+  </body>
+</html>

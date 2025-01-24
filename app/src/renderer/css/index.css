@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
+    margin: auto;
+}
+
+textarea {
+    width: 100%;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box; /* Opera/IE 8+ */
+}
+textarea:focus {
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+.transparent-button {
+    @apply rounded-md;
+    @apply px-2;
+    @apply my-1;
+}
+.transparent-button.selected {
+    @apply font-semibold;
+    @apply bg-gray-200;
+    @apply dark:bg-neutral-600;
+}
+.native-button {
+    cursor: pointer;
+    -webkit-appearance: button;
+    text-transform: none;
+    @apply rounded-md;
+    @apply text-sm;
+    @apply px-5;
+}
+.native-white-button {
+    @apply text-gray-800;
+    @apply bg-white;
+    @apply border;
+    @apply border-gray-200;
+    @apply dark:text-gray-100;
+    @apply dark:bg-neutral-700;
+    @apply dark:border-gray-600;
+}
+.native-action-button {
+    @apply bg-blue-500;
+    @apply dark:bg-blue-600;
+    @apply text-white;
+    @apply dark:text-gray-50;
+}
+.header-bar {
+    @apply bg-gray-100;
+    @apply text-gray-700;
+    @apply text-sm;
+    @apply text-left;
+    @apply items-center;
+    @apply h-10;
+    @apply dark:bg-neutral-700;
+    @apply dark:text-gray-300;
+}
+.form-input {
+    @apply border;
+    @apply border-gray-300;
+    @apply rounded-md;
+    @apply bg-gray-100;
+    @apply text-gray-900;
+    @apply dark:bg-neutral-700;
+    @apply dark:text-gray-300;
+    @apply dark:border-gray-600;
+}
+.form-label {
+    @apply text-gray-700;
+    @apply text-sm;
+    @apply dark:text-gray-400;
+}
+#chat-prompt.placeholder:empty:before {
+    content: 'Type your message here...';
+    color: #6b7281;
+}
+.max-w-70 {
+    max-width: 70%;
+}
+
+.form-toggle {
+    appearance: none; /* Remove default checkbox styles */
+    width: 40px; /* Width of the toggle */
+    height: 20px; /* Height of the toggle */
+    background-color: #ccc; /* Default background */
+    border-radius: 50px; /* Round edges */
+    position: relative; /* For positioning the inner circle */
+    outline: none; /* Remove outline */
+    cursor: pointer; /* Pointer on hover */
+}
+
+.form-toggle:checked {
+    background-color: #2c7fff; /* Background color when checked */
+}
+
+.form-toggle:checked::before {
+    transform: translateX(20px) translateY(-50%); /* Move the circle to the right */
+}
+
+.form-toggle::before {
+    content: ''; /* Generate the inner circle */
+    position: absolute; /* Position relative to the toggle */
+    top: 50%; /* Center vertically */
+    left: 2px; /* Position the inner circle */
+    width: 16px; /* Size of the circle */
+    height: 16px; /* Size of the circle */
+    background-color: white; /* Inner circle color */
+    border-radius: 50%; /* Make it round */
+    transition: transform 0.3s; /* Smooth transition */
+    transform: translateY(-50%);
+}
