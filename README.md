@@ -1,12 +1,12 @@
-# Mail Craft
+# Converse
 
-Mail Craft is a desktop app that helps to **write better emails** leveraging LLM models.
+Converse is a desktop app to chat and create tasks with various LLMs models.
 
 ## Current models supported
 
-- OpenAI GPT 4 (gpt-4-1106-preview)
-- OpenAI GPT 3.5 (gpt-3.5-turbo-1106)
-- MistralAI tiny
+- OpenAI
+- Mistral
+- Anthropic
 
 ## Technology
 
@@ -37,14 +37,14 @@ npm start
 
 Compile CSS
 ```bash
-npx tailwindcss -i ./src/index.css -o ./dist/output.css
+npx tailwindcss -i ./src/renderer/css/index.css -o ./public/output.css
 ```
 
 Build the app:
 ```bash
-npm run make
+npm run app:dist
 ```
 
 ## Screenshots
 
-![Screenshot of Mail Craft](./screenshots/screenshot_v0.0.4.png)
+![Screenshot of Converse](./screenshots/screenshot_v0.0.4.png)

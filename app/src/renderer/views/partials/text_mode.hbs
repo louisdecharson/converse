@@ -1,0 +1,85 @@
+<h3 class="pt-3 text-base font-semibold text-gray-700 dark:text-neutral-200">
+    Your text
+</h3>
+<hr class="my-1 border-gray dark:border-neutral-600" />
+<form id="text-form" autofocus>
+    <textarea
+        id="text-input"
+        class="dark:bg-neutral-800 dark:text-white p-2"
+        rows="10"
+        cols="100"
+        placeholder="Type your text here..."
+    ></textarea
+    ><br />
+    <hr class="mb-2 border-gray dark:border-neutral-700" />
+    <button
+        class="bg-blue-500 rounded-md text-sm py-1 text-white px-5 disabled:opacity-75"
+        type="submit"
+        id="submit"
+    >
+        <span id="beautify-button-text">🪄 {{task.action_name}}</span>
+        <div id="loading-spinner" class="flex hidden">
+            <svg
+                class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                ></circle>
+                <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+            </svg>
+            <span>Processing...</span>
+        </div>
+    </button>
+</form>
+<div id="output" class="dark:bg-neutral-800 hidden">
+    <div class="mt-4">
+        <h3
+            class="text-base font-semibold text-gray-700 mb-2 dark:text-neutral-200"
+        >
+            Suggested reword
+        </h3>
+        <div
+            class="p-2 bg-neutral-100 dark:bg-neutral-700 dark:text-white"
+            id="output-text"
+        ></div>
+        <div class="flex mt-2">
+            <button
+                class="flex bg-blue-500 hover:bg-blue-800 rounded-lg p-2 text-sm items-center text-white disabled:opacity-75"
+                id="copy-to-clipboard"
+                title="Copy to clipboard"
+                type="button"
+            >
+                <svg
+                    class="w-3.5 h-3.5 mr-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 18 20"
+                >
+                    <path
+                        d="M5 9V4.13a2.96 2.96 0 0 0-1.293.749L.879 7.707A2.96 2.96 0 0 0 .13 9H5Zm11.066-9H9.829a2.98 2.98 0 0 0-2.122.879L7 1.584A.987.987 0 0 0 6.766 2h4.3A3.972 3.972 0 0 1 15 6v10h1.066A1.97 1.97 0 0 0 18 14V2a1.97 1.97 0 0 0-1.934-2Z"
+                    ></path>
+                    <path
+                        d="M11.066 4H7v5a2 2 0 0 1-2 2H0v7a1.969 1.969 0 0 0 1.933 2h9.133A1.97 1.97 0 0 0 13 18V6a1.97 1.97 0 0 0-1.934-2Z"
+                    ></path>
+                </svg>
+                <span id="copy-to-clipboard-text">Copy</span>
+                <span id="copy-to-clipboard-success" class="hidden"
+                    >Copied !</span
+                >
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {{> header }}
+  </head>
+  <body>
+    <div class="flex items-center justify-center h-screen">
+      <form id="taskForm" class="w-full min-h-screen flex flex-col">
+        <div class="pl-10 font-bold flex header-bar">{{title}}</div>
+        <div class="flex-1 px-10 pt-2 bg-white dark:bg-neutral-800">
+          <!-- Name Field -->
+          <label for="name" class="block form-label mb-1">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Name"
+            value="{{task.name}}"
+            class="text-sm w-full px-2 py-1 mb-4 form-input"
+            required
+          />
+          <!-- Prompt Instructions Field -->
+          <label
+            for="prompt_instructions"
+            class="block form-label mb-1"
+          >Prompt Instructions</label
+          >
+          <textarea
+            id="prompt_instructions"
+            name="prompt_instructions"
+            placeholder="Prompt instructions"
+            rows="3"
+            class="text-sm w-full px-2 py-1 mb-4 form-input"
+            required
+          >
+{{task.prompt_instructions}}
+          </textarea>
+
+          <!-- Description Field -->
+          <label for="description" class="block form-label mb-1"
+          >Description</label
+          >
+          <input
+            type="text"
+            id="description"
+            name="description"
+            placeholder="Description"
+            value="{{task.description}}"
+            class="text-sm w-full px-2 py-1 mb-4 form-input"
+            required
+          />
+
+          <!-- Action Name Field -->
+          <label for="action_name" class="block form-label mb-1"
+          >Action Name</label
+          >
+          <input
+            type="text"
+            id="action_name"
+            name="action_name"
+            value="{{task.action_name}}"
+            placeholder="Action name"
+            class="text-sm w-full px-2 py-1 mb-4 form-input"
+            required
+          />
+          
+          <div class="flex items-center text-sm my-2">
+            <label for="default_provider" class="block form-label mb-1 mr-3">
+              Default provider:
+            </label>
+            <select
+                name="default_provider"
+                id="provider-select"
+              class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
+              data-default={{task.default_provider}}
+            ></select>
+          </div>
+
+          <div class="flex items-center text-sm my-2">
+            <label for="default_model" class="block form-label mb-1 mr-3">
+              Default model: 
+            </label>
+            <select
+                name="default_model"
+                id="model-select"
+              class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
+              data-default={{task.default_model}}
+            ></select>
+          </div>
+          
+          <div class="flex items-center my-2">
+            <label for="chat_mode" class="block form-label mb-1 mr-3">
+              Chat mode
+            </label>
+            <input
+              type="checkbox"
+              id="chat_mode"
+              name="chat_mode"
+              class="form-toggle"
+              value="true"
+              {{#if task.chat_mode}}checked{{/if}}
+            />
+          </div>
+
+        </div>
+              
+        <!-- Create Button -->
+        <div
+          class="pl-10 bg-white dark:bg-neutral-800 flex items-center border-t border-gray-100 dark:border-neutral-700 w-full space-x-2"
+          style="height: 40px"
+        >
+          <button
+            id="cancel"
+            type="button"
+            class="native-button native-white-button"
+          >
+            Cancel
+          </button>
+          <button
+            id="save-button"
+            type="submit"
+            value="save"
+            data-fetch-url="{{fetchURL}}"
+            class="native-button native-action-button"
+          >
+            {{action}}
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="./model_selection.js"></script>
+    <script>
+            document.getElementById('cancel').addEventListener('click', () => {
+                window.electronAPI.closeCreateTask();
+            });
+            const fetchURL = window.location.href.split('/').pop();
+            document
+                .getElementById('taskForm')
+                .addEventListener('submit', async (event) => {
+                    event.preventDefault(); // Prevent default form submission
+                    console.log('test');
+                    const formData = new FormData(event.target);
+                    const data = Object.fromEntries(formData); // Convert FormData to object
+                    console.log(data);
+                    try {
+                        const response = await fetch(fetchURL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data) // Send the form data as JSON
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        console.log('redirecting');
+                        window.location.href = '/';
+                    } catch (error) {
+                        console.error('Error during POST request:', error);
+                        // Handle the error (e.g., show an error message)
+                    }
+                });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings</title>
+        <link rel="stylesheet" href="./output.css" />
+    </head>
+    <body
+        class="bg-gray-100 items-center justify-center text-sm dark:bg-neutral-700 dark:text-gray-300 flex"
+    >
+        <form
+            id="api-keys-form"
+            style="margin-block-end: 0em"
+            class="min-h-screen flex flex-col w-full pt-2"
+        >
+            <div
+                class="my-4 mx-6 p-2 bg-gray-200 text-gray-700 dark:text-gray-300 dark:bg-neutral-600 border border-gray-300 dark:border-neutral-500 text-sm rounded-md hidden"
+                id="welcome-message"
+            >
+                <h3 class="font-semibold">Welcome to Converse !</h3>
+                <p>
+                    To use the app, you need to get a valid API key for at least
+                    one of the LLM service below.
+                </p>
+            </div>
+            <div class="px-8 flex-1">
+                <div class="mb-2 border-bottom">
+                    <label class="text-left mb-2 form-label" for="openaiKey"
+                        >OpenAI API Key</label
+                    >
+                    <input
+                        type="text"
+                        id="openaiAPIKey"
+                        name="openaiAPIKey"
+                        placeholder="Enter OpenAI API Key"
+                        class="form-input w-full py-2 px-2 leading-tight"
+                    />
+                </div>
+
+                <div class="mb-2">
+                    <label class="text-left mb-2 form-label" for="mistralKey"
+                        >MistralAI API Key</label
+                    >
+                    <input
+                        type="text"
+                        id="mistralAPIKey"
+                        name="mistralAPIKey"
+                        placeholder="Enter MistralAI API Key"
+                        class="form-input w-full py-2 px-2 leading-tight"
+                    />
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-left mb-2 form-label" for="anthropicKey"
+                        >Anthropic API Key</label
+                    >
+                    <input
+                        type="text"
+                        id="anthropicAPIKey"
+                        name="anthropicAPIKey"
+                        placeholder="Enter Anthropic API Key"
+                        class="form-input w-full py-2 px-2 leading-tight"
+                    />
+                </div>
+            </div>
+            <div
+                class="flex items-center border-t border-gray-200 bg-gray-100 w-full px-8 align-right space-x-2 dark:bg-neutral-700 dark:text-gray-300 dark:border-gray-600"
+                style="height: 40px"
+            >
+                <button
+                    id="cancel"
+                    type="submit"
+                    class="native-button native-white-button"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    class="native-button native-action-button"
+                >
+                    Save
+                </button>
+            </div>
+        </form>
+        <script src="../renderer_settings.js"></script>
+    </body>
+</html>

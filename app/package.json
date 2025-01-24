@@ -1,41 +1,60 @@
 {
-    "name": "mail-craft",
-    "productName": "Mail Craft",
-    "version": "0.0.4",
-    "description": "Help you write better email, powered by GPT models",
-    "main": "src/index.js",
-    "scripts": {
-        "start": "electron-forge start",
-        "package": "electron-forge package",
-        "make": "electron-forge make",
-        "publish": "electron-forge publish",
-        "lint": "echo \"No linting configured\""
+  "name": "converse",
+  "productName": "Converse",
+  "version": "0.1.0",
+  "description": "GUI wrapper around multiple LLM to chat and create text-based agents",
+  "main": "src/main/index.js",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder",
+    "dist": "yarn compile && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "louisdecharson.github.io/text-craft",
+    "files": ["src/**/*", "node_modules/**/*", "public/**/*", "package.json"],
+    "mac": {
+      "icon": "./icons/Converse.icns",
+      "target": ["dmg"]
     },
-    "keywords": [],
-    "author": {
-        "name": "Louis de Charsonville",
-        "email": "louis_de_charsonville@mckinsey.com"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "@electron/rebuild": "^3.7.1",
-        "electron-forge": "^0.0.2",
-        "electron-squirrel-startup": "^1.0.0",
-        "electron-store": "^8.1.0",
-        "node-abi": "^3.71.0",
-        "openai": "^4.20.1",
-        "sqlite3": "^5.1.6"
-    },
-    "devDependencies": {
-        "@electron-forge/cli": "^7.2.0",
-        "@electron-forge/maker-deb": "^7.2.0",
-        "@electron-forge/maker-rpm": "^7.2.0",
-        "@electron-forge/maker-squirrel": "^7.2.0",
-        "@electron-forge/maker-zip": "^7.2.0",
-        "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
-        "electron": "^33.2.1",
-        "electron-rebuild": "^3.2.9",
-        "prettier": "^3.1.1",
-        "tailwindcss": "^3.3.6"
-    }
+    "publish": null
+  },
+  "keywords": [],
+  "author": {
+    "name": "Louis de Charsonville",
+    "email": "louisdecharson@posteo.net"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.35.0",
+    "@electron/rebuild": "^3.7.1",
+    "electron-forge": "^0.0.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.1.0",
+    "express": "^4.21.2",
+    "handlebars": "^4.7.8",
+    "hbs": "^4.2.0",
+    "node-abi": "^3.71.0",
+    "openai": "^4.20.1",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
+    "electron": "^33.2.1",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.3.6",
+    "electron-builder": "^25.1.8"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
