@@ -47,4 +47,6 @@ npm run app:dist
 
 ## Screenshots
 
-![Screenshot of Converse](./screenshots/screenshot_v0.0.4.png)
+![Main window](./app/screenshots/screenshot_v0.1.0_main.png)
+![Chat mode](./app/screenshots/screenshot_v0.1.0_chat_mode.png)
+![Text mode in dark mode](./app/screenshots/screenshot_v0.1.0_craft_mail_darkmode.png)
