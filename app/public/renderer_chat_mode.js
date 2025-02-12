@@ -99,7 +99,8 @@ const submitMessage = async (message, formattedMessage) => {
             provider,
             model,
             promptInstructions,
-            chat.messages
+            JSON.stringify(chat.messages),
+            ''
         );
     } catch (error) {
         document.getElementById('error').innerHTML =
