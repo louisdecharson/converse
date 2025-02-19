@@ -548,6 +548,10 @@ video {
   position: fixed;
 }
 
+.absolute {
+  position: absolute;
+}
+
 .relative {
   position: relative;
 }
@@ -641,12 +645,12 @@ video {
   margin-top: 0.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-auto {
+  margin-top: auto;
 }
 
 .block {
@@ -687,10 +691,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.max-h-52 {
-  max-height: 13rem;
 }
 
 .max-h-\[25dvh\] {
@@ -1295,6 +1295,11 @@ textarea:focus {
   transition: transform 0.3s;
   /* Smooth transition */
   transform: translateY(-50%);
+}
+
+#main-content {
+  height: calc(100vh - 40px);
+  /* 40px is the height of the taskbar*/
 }
 
 .hover\:bg-blue-800:hover {

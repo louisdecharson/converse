@@ -50,7 +50,7 @@ const ipc = (
             { task_id: task_id },
             'timestamp',
             limit,
-            true
+            false
         );
         return rows;
     });

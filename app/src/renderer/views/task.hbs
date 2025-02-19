@@ -6,7 +6,11 @@
         <title>Converse</title>
         <link rel="stylesheet" href="../output.css" />
     </head>
-    <body class="bg-white dark:bg-neutral-800">
+    <body class="bg-white dark:bg-neutral-800 h-screen">
+        <div
+            class="hidden bg-gray-200 min-w-3/4"
+            id="tailwind-class-container"
+        ></div>
         <div id="main-window">
             <div
                 id="sidebar"
@@ -40,23 +44,135 @@
                     id="taskbar"
                     class="sticky w-full top-0 header-bar flex justify-between items-center z-10 border-gray-300 dark:border-neutral-600"
                 >
-                    <button
-                        id="toggle-sidebar"
-                        class="hover:bg-gray-200 ml-2 py-1 px-2 rounded dark:hover:bg-neutral-700"
-                        title="View chat history"
-                    >
-                        <svg
-                            fill="#6B6C6D"
-                            width="24px"
-                            height="24px"
-                            viewBox="0 0 1.68 1.68"
-                            xmlns="http://www.w3.org/2000/svg"
+                    <div class="text-gray-600 dark:text-neutral-300 ml-2">
+                        <button
+                            id="toggle-sidebar"
+                            class="px-2 hover:bg-gray-200 dark:hover:bg-neutral-600 py-1 rounded"
+                            title="View chat history"
                         >
-                            <path
-                                d="M0.231 1.487h1.217c0.147 0 0.221 -0.073 0.221 -0.218V0.411c0 -0.145 -0.074 -0.218 -0.221 -0.218H0.231C0.085 0.193 0.011 0.265 0.011 0.411V1.269c0 0.146 0.075 0.218 0.221 0.218Zm0.002 -0.113c-0.07 0 -0.11 -0.037 -0.11 -0.11V0.416c0 -0.073 0.039 -0.11 0.11 -0.11h0.313v1.068Zm1.213 -1.068c0.07 0 0.11 0.037 0.11 0.11V1.264c0 0.073 -0.04 0.11 -0.11 0.11h-0.79V0.306Zm-1.035 0.261c0.021 0 0.04 -0.019 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.02 0.018 0.039 0.039 0.039Zm0 0.182c0.021 0 0.04 -0.019 0.04 -0.04 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.021 0.018 0.04 0.039 0.04Zm0 0.181c0.021 0 0.04 -0.018 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039s0.018 0.039 0.039 0.039Z"
-                            />
-                        </svg>
-                    </button>
+                            <svg
+                                fill="currentColor"
+                                width="24px"
+                                height="24px"
+                                viewBox="0 0 1.68 1.68"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M0.231 1.487h1.217c0.147 0 0.221 -0.073 0.221 -0.218V0.411c0 -0.145 -0.074 -0.218 -0.221 -0.218H0.231C0.085 0.193 0.011 0.265 0.011 0.411V1.269c0 0.146 0.075 0.218 0.221 0.218Zm0.002 -0.113c-0.07 0 -0.11 -0.037 -0.11 -0.11V0.416c0 -0.073 0.039 -0.11 0.11 -0.11h0.313v1.068Zm1.213 -1.068c0.07 0 0.11 0.037 0.11 0.11V1.264c0 0.073 -0.04 0.11 -0.11 0.11h-0.79V0.306Zm-1.035 0.261c0.021 0 0.04 -0.019 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.02 0.018 0.039 0.039 0.039Zm0 0.182c0.021 0 0.04 -0.019 0.04 -0.04 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039 0 0.021 0.018 0.04 0.039 0.04Zm0 0.181c0.021 0 0.04 -0.018 0.04 -0.039 0 -0.021 -0.019 -0.039 -0.04 -0.039h-0.151c-0.021 0 -0.039 0.018 -0.039 0.039s0.018 0.039 0.039 0.039Z"
+                                />
+                            </svg>
+                        </button>
+                        <button
+                            id="display-instructions"
+                            class="px-2 hover:bg-gray-200 dark:hover:bg-neutral-600 py-1 rounded"
+                            title="View prompt instructions"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                width="24px"
+                                height="24px"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                                />
+                            </svg>
+                        </button>
+                        <div
+                            id="prompt-instructions-container"
+                            class="absolute hidden bg-gray-100 dark:bg-neutral-700 rounded border border-gray-300 dark:border-neutral-600 p-2 shadow-md"
+                            style="min-width: 75dvw"
+                        >
+                            <h3
+                                class="text-gray-700 dark:text-gray-300 font-semibold text-sm"
+                            >
+                                Prompt instructions
+                            </h3>
+                            <textarea
+                                class="text-sm text-left text-gray-700 bg-gray-100 dark:bg-neutral-700 dark:text-gray-300"
+                                style="height: auto; overflow: hidden"
+                                id="prompt-instructions"
+                            >
+{{ task.prompt_instructions }}
+            </textarea
+                            >
+                        </div>
+                        <button
+                            id="display-model-select"
+                            class="px-2 hover:bg-gray-200 dark:hover:bg-neutral-600 py-1 rounded"
+                            title="Choose provider and model"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                width="24px"
+                                height="24px"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                                />
+                            </svg>
+                        </button>
+                        <div
+                            id="model-select-popup"
+                            class="absolute hidden bg-gray-100 dark:bg-neutral-700 rounded border border-gray-300 dark:border-neutral-600 p-2 shadow-md"
+                        >
+                            <label
+                                for="provider-select"
+                                class="text-gray-700 dark:text-gray-300 ml-2"
+                                >Provider:</label
+                            >
+                            <select
+                                name="provider"
+                                id="provider-select"
+                                class="rounded-md border border-gray-200 dark:border-gray-600 dark:text-gray-100 dark:bg-neutral-700"
+                                data-default="{{task.default_provider}}"
+                            ></select>
+                            <label
+                                for="model-select"
+                                class="text-gray-700 dark:text-gray-300 ml-2"
+                                >Model:</label
+                            >
+                            <select
+                                name="model"
+                                id="model-select"
+                                class="rounded-md border border-gray-200 dark:border-gray-600 dark:text-gray-100 dark:bg-neutral-700"
+                                data-default="{{task.default_model}}"
+                            ></select>
+                        </div>
+                        <button
+                            id="new-task-button"
+                            class="px-2 hover:bg-gray-200 dark:hover:bg-neutral-600 py-1 rounded"
+                            title="Start new task"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="size-6"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                     <h1
                         id="app-title"
                         class="text-base text-center dark:text-neutral-200 font-bold text-sm text-gray-700"
@@ -73,56 +189,8 @@
                 </div>
                 <div
                     id="main-content"
-                    class="px-4 py-3 bg-white dark:bg-neutral-800"
+                    class="px-4 py-3 bg-white dark:bg-neutral-800 flex flex-col"
                 >
-                    <div id="model-selector" class="text-sm mt-3">
-                        <button
-                            class="native-button native-white-button"
-                            id="display-instructions"
-                        >
-                            Show Prompt Instructions
-                        </button>
-                        <label
-                            for="provider-select"
-                            class="text-gray-700 dark:text-gray-300 ml-2"
-                            >Provider:</label
-                        >
-                        <select
-                            name="provider"
-                            id="provider-select"
-                            class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
-                            data-default="{{task.default_provider}}"
-                        ></select>
-                        <label
-                            for="model-select"
-                            class="text-gray-700 dark:text-gray-300 ml-2"
-                            >Model:</label
-                        >
-                        <select
-                            name="model"
-                            id="model-select"
-                            class="rounded-md border border-gray-200 dark:border-gray-700 dark:text-gray-100 dark:bg-neutral-700"
-                            data-default="{{task.default_model}}"
-                        ></select>
-                    </div>
-                    <div
-                        id="prompt-instructions-container"
-                        class="mt-2 text-gray-700 bg-gray-100 dark:bg-neutral-700 dark:text-gray-300 p-2"
-                    >
-                        <h3
-                            class="text-gray-700 dark:text-gray-300 font-semibold text-sm"
-                        >
-                            Prompt instructions
-                        </h3>
-                        <textarea
-                            class="text-sm text-left text-gray-700 bg-gray-100 dark:bg-neutral-700 dark:text-gray-300"
-                            style="height: auto; overflow: hidden"
-                            id="prompt-instructions"
-                        >
-              {{ task.prompt_instructions }}
-            </textarea
-                        >
-                    </div>
                     {{#if task.chat_mode}} {{> chat_mode}} {{else}} {{>
                     text_mode}} {{/if}}
                     <div id="error" class="text-rose-600 italic"></div>

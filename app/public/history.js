@@ -37,7 +37,7 @@ class LocalHistory {
         for (const item of array) {
             this.history[item['chat_id']] = item;
             if (!this.orderedChatIds.includes(item['chat_id'])) {
-                this.orderedChatIds.push(item['chat_id']);
+                this.orderedChatIds = [item['chat_id'], ...this.orderedChatIds];
             }
         }
         this.displayTable();

@@ -108,13 +108,6 @@ const submitMessage = async (message, formattedMessage) => {
     }
 };
 
-// start new chat
-const newChatButton = document.getElementById('new-chat-button');
-newChatButton.addEventListener('click', () => {
-    chat.clear();
-    currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
-});
-
 // History
 localHistory = new LocalHistory(chat);
 localHistory.load();

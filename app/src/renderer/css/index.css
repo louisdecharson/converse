@@ -115,3 +115,6 @@ textarea:focus {
     transition: transform 0.3s; /* Smooth transition */
     transform: translateY(-50%);
 }
+#main-content {
+    height: calc(100vh - 40px); /* 40px is the height of the taskbar*/
+}

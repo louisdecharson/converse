@@ -31,23 +31,37 @@ const taskId = parseInt(
 
 // Hide and show prompt instructions
 displayInstructionsButton = document.getElementById('display-instructions');
+displayInstructionsContainer = document.getElementById(
+    'prompt-instructions-container'
+);
 hideElement('prompt-instructions-container');
 let instructionsDisplayed = false;
 displayInstructionsButton.addEventListener('click', () => {
+    const displayInstructionsButtonRect =
+        displayInstructionsButton.getBoundingClientRect();
+    const sidebarWidth = sidebar.getBoundingClientRect().width;
     if (instructionsDisplayed) {
         hideElement('prompt-instructions-container');
-        displayInstructionsButton.innerHTML = 'Show Prompt Instructions';
         instructionsDisplayed = false;
+        displayInstructionsButton.classList.remove('bg-gray-200');
+        displayInstructionsButton.classList.remove('dark:bg-neutral-600');
     } else {
+        displayInstructionsContainer.style.left = `${
+            displayInstructionsButtonRect.left + window.scrollX - sidebarWidth
+        }px`;
+        displayInstructionsContainer.style.top = `${
+            displayInstructionsButtonRect.bottom + 5
+        }px`; // Set top position
         showElement('prompt-instructions-container');
-        displayInstructionsButton.innerHTML = 'Hide Prompt Instructions';
         instructionsDisplayed = true;
+        displayInstructionsButton.classList.add('bg-gray-200');
+        displayInstructionsButton.classList.add('dark:bg-neutral-600');
     }
 });
 
 // Sidebar
+const sidebar = document.getElementById('sidebar');
 const toggleSidebar = () => {
-    const sidebar = document.getElementById('sidebar');
     const mainContainer = document.getElementById('main-container');
 
     // Toggle sidebar width and main content margin
@@ -84,5 +98,45 @@ document
     .addEventListener('click', async () => {
         localHistory.loadMore();
     });
+
+const displayModelSelectPopup = document.getElementById('display-model-select');
+const modelSelectPopup = document.getElementById('model-select-popup');
+
+displayModelSelectPopup.addEventListener('click', (event) => {
+    const rect = displayModelSelectPopup.getBoundingClientRect();
+    const sidebarWidth = sidebar.getBoundingClientRect().width;
+    modelSelectPopup.style.left = `${
+        rect.left + window.scrollX - sidebarWidth
+    }px`; // Set left position
+    modelSelectPopup.style.top = `${rect.bottom + 5}px`; // Set top position
+    modelSelectPopup.classList.toggle('hidden'); // Show the popup
+    if (modelSelectPopup.classList.contains('hidden')) {
+        displayModelSelectPopup.classList.remove('bg-gray-200');
+        displayModelSelectPopup.classList.remove('dark:bg-neutral-600');
+    } else {
+        displayModelSelectPopup.classList.add('bg-gray-200');
+        displayModelSelectPopup.classList.add('dark:bg-neutral-600');
+    }
+});
+window.addEventListener('click', (event) => {
+    if (
+        !modelSelectPopup.contains(event.target) &&
+        modelSelectPopup.classList.contains('hidden')
+    ) {
+        modelSelectPopup.classList.add('hidden');
+    }
+});
+// start new chat
+const newTaskButton = document.getElementById('new-task-button');
+newTaskButton.addEventListener('click', () => {
+    if (typeof chat !== 'undefined') {
+        chat.clear();
+        currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
+    } else {
+        hideElement('output');
+        document.getElementById('output-text').innerHTML = '';
+        document.getElementById('text-input').value = '';
+    }
+});
 
 let currentChatId;
