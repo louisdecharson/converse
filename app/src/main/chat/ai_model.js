@@ -107,13 +107,21 @@ class AnthropicModel extends AIModel {
         super(model, apiKey);
         this.anthropic = new Anthropic({ apiKey: apiKey });
     }
+    replaceSystemRole(messages) {
+        return messages.map((message) => {
+            if (message.role === 'system') {
+                return { ...message, role: 'assistant' };
+            }
+            return message;
+        });
+    }
     async requestAPI(messages, instructions) {
         this.response = await this.anthropic.messages.create({
             model: this.model,
             max_tokens: 1000,
             temperature: 0,
             system: instructions,
-            messages: messages
+            messages: this.replaceSystemRole(messages)
         });
     }
     getTextResponse() {

@@ -77,6 +77,7 @@ chatComposer.addEventListener('click', () => {
 const loadingSpinner = document.getElementById('loading-spinner');
 const chatContainer = document.getElementById('chat-container');
 const submitMessage = async (message, formattedMessage) => {
+    document.getElementById('error').innerHTML = '';
     chat.addUserMessage(formattedMessage);
     const provider = document.getElementById('provider-select').value;
     const model = document.getElementById('model-select').value;
@@ -109,6 +110,7 @@ const submitMessage = async (message, formattedMessage) => {
     } catch (error) {
         document.getElementById('error').innerHTML =
             'Error when processing your request. ' + error;
+        loadingSpinner.classList.toggle('hidden');
     }
 };
 
