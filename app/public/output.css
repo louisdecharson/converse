@@ -697,10 +697,6 @@ video {
   max-height: 25dvh;
 }
 
-.min-h-\[44px\] {
-  min-height: 44px;
-}
-
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1018,6 +1014,11 @@ video {
 
 .leading-tight {
   line-height: 1.25;
+}
+
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
 .text-gray-600 {

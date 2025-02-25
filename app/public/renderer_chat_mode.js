@@ -2,6 +2,7 @@ class Chat {
     constructor() {
         this.messages = [];
         this.conversationElement = document.getElementById('conversation');
+        this.container = document.getElementById('conversation-container');
     }
     clear() {
         this.messages = [];
@@ -43,8 +44,7 @@ class Chat {
         }
         messageDivContainer.appendChild(messageDiv);
         this.conversationElement.appendChild(messageDivContainer);
-        this.conversationElement.scrollTop =
-            this.conversationElement.scrollHeight;
+        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 const chat = new Chat();
@@ -74,6 +74,8 @@ chatComposer.addEventListener('click', () => {
     // Focus on the chat-prompt to enable typing
     chatPromptDiv.focus();
 });
+const loadingSpinner = document.getElementById('loading-spinner');
+const chatContainer = document.getElementById('chat-container');
 const submitMessage = async (message, formattedMessage) => {
     chat.addUserMessage(formattedMessage);
     const provider = document.getElementById('provider-select').value;
@@ -81,6 +83,7 @@ const submitMessage = async (message, formattedMessage) => {
     const promptInstructions = document.getElementById(
         'prompt-instructions'
     ).value;
+    loadingSpinner.classList.toggle('hidden');
     if (!currentChatId) {
         currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
     }
@@ -102,6 +105,7 @@ const submitMessage = async (message, formattedMessage) => {
             JSON.stringify(chat.messages),
             ''
         );
+        loadingSpinner.classList.toggle('hidden');
     } catch (error) {
         document.getElementById('error').innerHTML =
             'Error when processing your request. ' + error;
