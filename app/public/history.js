@@ -35,9 +35,12 @@ class LocalHistory {
             taskId
         );
         for (const item of array) {
-            this.history[item['chat_id']] = item;
-            if (!this.orderedChatIds.includes(item['chat_id'])) {
-                this.orderedChatIds = [item['chat_id'], ...this.orderedChatIds];
+            const chatId = item['chat_id'];
+            if (!(chatId in this.history)) {
+                this.history[chatId] = item;
+            }
+            if (!this.orderedChatIds.includes(chatId)) {
+                this.orderedChatIds.unshift(chatId);
             }
         }
         this.displayTable();

@@ -89,7 +89,7 @@ const submitMessage = async (message, formattedMessage) => {
         currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
     }
     try {
-        const { textResponse, chatId } = await window.electronAPI.chat({
+        const { textResponse, rowId } = await window.electronAPI.chat({
             messages: chat.messages,
             provider,
             model,
@@ -97,6 +97,7 @@ const submitMessage = async (message, formattedMessage) => {
             taskId,
             chatId: currentChatId
         });
+        chatId = rowId;
         chat.addLLMMessage(textResponse);
         localHistory.addItem(
             currentChatId,
