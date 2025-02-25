@@ -58,6 +58,7 @@ const ipc = (
         settings.setApiKey('openai', userSettings['openaiAPIKey']);
         settings.setApiKey('mistralai', userSettings['mistralAPIKey']);
         settings.setApiKey('anthropic', userSettings['anthropicAPIKey']);
+        settings.setApiKey('openrouter', userSettings['openRouterAPIKey']);
     });
     ipcMain.on('settings:close', (event) => {
         closeSettingsWindow();
@@ -76,6 +77,10 @@ const ipc = (
         if (settings.getApiKey('anthropic') != null) {
             availableModels['anthropic'] = models['anthropic'];
         }
+        if (settings.getApiKey('openrouter') != null) {
+            availableModels['openrouter'] = models['openrouter'];
+        }
+
         return availableModels;
     });
     ipcMain.on('pintask', (event, taskId) => {

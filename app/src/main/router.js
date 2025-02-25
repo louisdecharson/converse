@@ -1,7 +1,8 @@
 const {
     MistralModel,
     GPTModel,
-    AnthropicModel
+    AnthropicModel,
+    OpenRouterModel
 } = require('./chat/ai_model.js');
 
 class Router {
@@ -23,6 +24,11 @@ class Router {
             );
         } else if (provider === 'mistralai') {
             model = new MistralModel(
+                modelName,
+                this.settings.getApiKey(provider)
+            );
+        } else if (provider === 'openrouter') {
+            model = new OpenRouterModel(
                 modelName,
                 this.settings.getApiKey(provider)
             );

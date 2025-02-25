@@ -70,6 +70,7 @@ const createSettingsWindow = (displayWelcomeMessage) => {
                 openaiAPIKey: settings.getApiKey('openai'),
                 mistralAPIKey: settings.getApiKey('mistralai'),
                 anthropicAPIKey: settings.getApiKey('anthropic'),
+                openRouterAPIKey: settings.getApiKey('openrouter'),
                 displayWelcomeMessage: displayWelcomeMessage
             });
             settingsWindow.focus();

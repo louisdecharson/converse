@@ -4,7 +4,8 @@ class Settings {
     static API_KEYS_MAPPING = {
         openai: 'settings:openai-api-key',
         mistralai: 'settings:mistral-api-key',
-        anthropic: 'settings:anthropic-api-key'
+        anthropic: 'settings:anthropic-api-key',
+        openrouter: 'settings:openrouter-api-key'
     };
     constructor() {
         this.store = new Store();
@@ -14,7 +15,7 @@ class Settings {
         return this.store.get(key);
     }
     set(key, value) {
-        this.store[key] = value;
+        this.store.set(key, value);
     }
     hasDefinedApiKeys() {
         return this.apiKeyNames.some((key) => this.store.get(key));

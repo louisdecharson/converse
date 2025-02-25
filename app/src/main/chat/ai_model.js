@@ -131,4 +131,33 @@ class AnthropicModel extends AIModel {
         );
     }
 }
-module.exports = { MistralModel, GPTModel, AnthropicModel };
+class OpenRouterModel extends AIModel {
+    constructor(model, apiKey) {
+        super(model, apiKey);
+        this.openai = new OpenAI({
+            apiKey: apiKey,
+            baseURL: 'https://openrouter.ai/api/v1'
+        });
+    }
+    async requestAPI(messages, instructions) {
+        const instructionMessage = {
+            role: 'system',
+            content: instructions
+        };
+        const messagesWithInstructions = [instructionMessage, ...messages];
+        this.response = await this.openai.chat.completions.create({
+            model: this.model,
+            messages: messagesWithInstructions,
+            temperature: 1,
+            max_tokens: 1024,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            extra_headers: {
+                'HTTP-Referer': 'https://github.com/louisdecharson/converse',
+                'X-Title': 'Converse'
+            }
+        });
+    }
+}
+module.exports = { MistralModel, GPTModel, AnthropicModel, OpenRouterModel };

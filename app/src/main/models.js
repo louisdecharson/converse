@@ -11,12 +11,10 @@ const models = {
         'gpt-4-1106-preview'
     ],
     anthropic: [
-        'claude-3-5-sonnet-20241022',
-        'claude-3-5-sonnet-20240620',
-        'claude-3-5-haiku-20241022',
-        'claude-3-opus-20240229',
-        'claude-3-sonnet-20240229',
-        'claude-3-haiku-20240307'
+        'claude-3-7-sonnet-latest',
+        'claude-3-5-sonnet-latest',
+        'claude-3-5-haiku-latest',
+        'claude-3-opus-20240229'
     ],
     mistralai: [
         'mistral-large-latest',
@@ -26,6 +24,11 @@ const models = {
         'open-mistral-nemo',
         'mistral-small-latest',
         'codestral-latest'
+    ],
+    openrouter: [
+        'deepseek/deepseek-r1',
+        'google/gemini-flash-1.5',
+        'google/gemini-2.0-flash-001'
     ]
 };
 module.exports = models;
