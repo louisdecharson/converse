@@ -6,6 +6,52 @@ class AIModel {
         this.model = model;
         this.apiKey = apiKey;
     }
+    
+    static async getAvailableModels(settings) {
+        // Default structure for available models
+        const models = {
+            openai: [
+                'gpt-3.5-turbo',
+                'gpt-4',
+                'gpt-4-turbo',
+                'gpt-4o'
+            ],
+            anthropic: [
+                'claude-3-opus-20240229',
+                'claude-3-sonnet-20240229',
+                'claude-3-haiku-20240307'
+            ],
+            mistralai: [
+                'mistral-tiny',
+                'mistral-small',
+                'mistral-medium',
+                'mistral-large-latest'
+            ],
+            openrouter: [
+                'openai/gpt-4-turbo',
+                'anthropic/claude-3-opus',
+                'anthropic/claude-3-sonnet',
+                'meta-llama/llama-3-70b-instruct',
+                'google/gemini-pro'
+            ]
+        };
+        
+        // Filter providers based on available API keys
+        const availableProviders = {};
+        for (const provider in models) {
+            try {
+                const apiKey = settings.getApiKey(provider);
+                if (apiKey) {
+                    availableProviders[provider] = models[provider];
+                }
+            } catch (error) {
+                console.error(`Error getting API key for ${provider}:`, error.message);
+            }
+        }
+        
+        return availableProviders;
+    }
+    
     async requestAPI(messages, instructions) {
         throw new Error('Not implemented');
     }
@@ -168,4 +214,10 @@ class OpenRouterModel extends AIModel {
         });
     }
 }
-module.exports = { MistralModel, GPTModel, AnthropicModel, OpenRouterModel };
+module.exports = { 
+    AIModel,
+    MistralModel, 
+    GPTModel, 
+    AnthropicModel, 
+    OpenRouterModel 
+};
