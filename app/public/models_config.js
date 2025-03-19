@@ -31,24 +31,18 @@ class ModelsTable {
             .forEach((model) => this.addRow(model));
     }
     filter(skip, model) {
+        // Early return if search is empty
         if (skip) {
             return true;
         }
-        for (const input of this.userInput) {
-            let match = false;
-            for (const [key, value] of Object.entries(model)) {
-                if (
-                    typeof value === 'string' &&
-                    value.toLowerCase().includes(input)
-                ) {
-                    match = true;
-                }
-            }
-            if (!match) {
-                return false;
-            }
-        }
-        return true;
+        
+        // Check if all search terms match at least one field in the model
+        return this.userInput.every(input => 
+            Object.values(model).some(value => 
+                typeof value === 'string' && 
+                value.toLowerCase().includes(input)
+            )
+        );
     }
 }
 const favModel = (favElement) => {
