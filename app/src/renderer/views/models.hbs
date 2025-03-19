@@ -3,7 +3,9 @@
     <head>
         {{> header }}
     </head>
-    <body class="flex flex-col h-screen overflow-hidden bg-white dark:bg-neutral-800">
+    <body
+        class="flex flex-col h-screen overflow-hidden bg-white dark:bg-neutral-800"
+    >
         <div
             class="sticky w-full top-0 flex justify-between items-center z-10 header-bar pl-10"
         >
@@ -42,7 +44,9 @@
         <div class="flex flex-col flex-1 overflow-hidden pl-10">
             <div class="flex flex-col flex-1 overflow-hidden">
                 <table class="w-full text-sm text-gray-800 dark:text-gray-200">
-                    <thead class="sticky top-0 bg-white dark:bg-neutral-800 z-10">
+                    <thead
+                        class="sticky top-0 bg-white dark:bg-neutral-800 z-10"
+                    >
                         <tr
                             class="border-b border-gray-100 dark:border-neutral-700"
                         >
@@ -52,8 +56,8 @@
                         </tr>
                     </thead>
                     <tbody
-                        class="divide-y divide-gray-100 dark:divide-neutral-700 block overflow-y-auto"
-                        style="max-height: calc(100vh - 120px);"
+                        class="divide-y divide-gray-100 dark:divide-neutral-700 block overflow-y-auto w-full"
+                        style="max-height: calc(100vh - 120px)"
                         id="models-table-content"
                     ></tbody>
                 </table>
@@ -61,7 +65,7 @@
         </div>
         <div
             id="footer"
-            class="sticky bottom-0 w-full pl-10 bg-white dark:bg-neutral-800 text-left flex items-center border-t border-gray-100 dark:border-neutral-700"
+            class="sticky bottom-0 w-full pl-10 bg-white dark:bg-neutral-800 text-left flex items-center border-t border-gray-100 dark:border-neutral-700 even:bg-gray-50 dark:even:bg-neutral-700"
             style="height: 40px"
         >
             <button class="pl-10 native-button native-white-button">
@@ -69,5 +73,6 @@
             </button>
         </div>
         <script src="./models_config.js"></script>
+        <div class="table table-fixed"></div>
     </body>
 </html>

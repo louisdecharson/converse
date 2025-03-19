@@ -12,7 +12,13 @@ class ModelsTable {
     addRow(modelItem) {
         const { provider, model, id, favorite } = modelItem;
         const newRow = document.createElement('tr');
-        const rowClasses = ['even:bg-gray-50', 'dark:even:bg-neutral-700', 'w-full', 'table', 'table-fixed'];
+        const rowClasses = [
+            'even:bg-gray-50',
+            'dark:even:bg-neutral-700',
+            'table',
+            'table-fixed',
+            'w-full'
+        ];
         newRow.classList.add(...rowClasses);
         const favoriteSymbol = favorite ? '★' : '☆';
         const classesCell = 'py-1 whitespace-nowrap text-sm';
