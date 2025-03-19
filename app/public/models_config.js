@@ -1,4 +1,5 @@
 const searchInput = document.getElementById('search-input');
+const onlyFavButton = document.getElementById('only-favorites');
 const refreshModels = document.getElementById('refresh-models');
 
 class ModelsTable {
@@ -23,9 +24,9 @@ class ModelsTable {
         const favoriteSymbol = favorite ? '★' : '☆';
         const classesCell = 'py-1 whitespace-nowrap text-sm';
         newRow.innerHTML = `
-    <td class="${classesCell}">${provider}</td>
-    <td class="${classesCell}">${model}</td>
-    <td class="${classesCell}" data-modelid="${id}" onclick="favModel(this)">${favoriteSymbol}</td>`;
+        <td class="${classesCell} w-1/6">${provider}</td>
+        <td class="${classesCell} w-2/3">${model}</td>
+        <td class="${classesCell} w-1/6" data-modelid="${id}" onclick="favModel(this)">${favoriteSymbol}</td>`;
         this.tbody.appendChild(newRow);
     }
     display() {
@@ -39,7 +40,7 @@ class ModelsTable {
     filter(skip, model) {
         // Early return if search is empty
         if (skip) {
-            return true;
+            return !showFavOnly || model['favorite'];
         }
 
         // Check if all search terms match at least one field in the model
@@ -77,4 +78,17 @@ refreshModels.addEventListener('click', (event) => {
         svgIcon.classList.remove('animate-spin');
         models.display();
     });
+});
+
+let showFavOnly = false; // all tasks are showed
+onlyFavButton.addEventListener('click', (event) => {
+    const svg = onlyFavButton.querySelector('svg');
+    if (showFavOnly) {
+        showFavOnly = false;
+        svg.setAttribute('fill', 'none');
+    } else {
+        showFavOnly = true;
+        svg.setAttribute('fill', 'currentColor');
+    }
+    models.display();
 });

@@ -13,7 +13,7 @@ class LLMProviderBase {
         throw new Error('Not implemented');
     }
     async chatCompletion(model, messages, instructions) {
-        await this.requestAPI(messages, instructions);
+        await this.requestAPI(model, messages, instructions);
         const textResponse = this.getTextResponse();
         const promptTokens = this.getPromptTokens();
         const completionTokens = this.getCompletionTokens();
@@ -61,32 +61,34 @@ class OpenAIWrapper extends LLMProviderBase {
             presence_penalty: 0
         });
     }
-    // async getModels() {
-    //     try {
-    //         const response = await openai.models.list();
-    //         return response.data;
-    //     } catch (error) {
-    //         console.log('Error fetching OpenAI models');
-    //         return error;
-    //     }
-    // }
+    _filterModels(models) {
+        const startsWith = ['gpt-', 'o'];
+        const blacklist = ['instruct', 'moderation', 'audio', 'realtime'];
+        return models.reduce((acc, model) => {
+            if (
+                startsWith.some((el) => model['id'].startsWith(el)) &&
+                blacklist.every((el) => !model['id'].includes(el))
+            ) {
+                acc.push(model['id']);
+            }
+            return acc;
+        }, []);
+    }
     async getModels() {
-        return [
-            'gpt-3.5-turbo',
-            'gpt-3.5-turbo-16k',
-            'gpt-4o-mini',
-            'gpt-4',
-            'gpt-4o',
-            'gpt-4-turbo',
-            'gpt-4-turbo-preview',
-            'gpt-4-32k',
-            'gpt-4-1106-preview'
-        ];
+        try {
+            const response = await this.openai.models.list();
+            const filteredModels = this._filterModels(response.data);
+            return filteredModels;
+        } catch (error) {
+            console.log('Error fetching OpenAI models:', error);
+            return error;
+        }
     }
 }
 class MistralAIWrapper extends LLMProviderBase {
     constructor(apiKey, store) {
         super(apiKey, store);
+        this.baseURL = 'https://api.mistral.ai/v1';
     }
     async requestAPI(model, messages, instructions) {
         const instructionMessage = {
@@ -95,24 +97,21 @@ class MistralAIWrapper extends LLMProviderBase {
         };
         const messagesWithInstructions = [instructionMessage, ...messages];
         try {
-            const response = await fetch(
-                'https://api.mistral.ai/v1/chat/completions',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        Authorization: `Bearer ${this.apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: messagesWithInstructions,
-                        temperature: 1,
-                        max_tokens: 1024,
-                        top_p: 1
-                    })
-                }
-            );
+            const response = await fetch(`${this.baseURL}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${this.apiKey}`
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: messagesWithInstructions,
+                    temperature: 1,
+                    max_tokens: 1024,
+                    top_p: 1
+                })
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}.`);
@@ -124,16 +123,31 @@ class MistralAIWrapper extends LLMProviderBase {
             throw new Error(error.message);
         }
     }
+    _filterModels(models) {
+        return models.reduce((acc, model) => {
+            if (
+                model['capabilities']['completion_chat'] &&
+                model['id'].endsWith('latest')
+            ) {
+                acc.push(model['id']);
+            }
+            return acc;
+        }, []);
+    }
     async getModels() {
-        return [
-            'mistral-large-latest',
-            'mistral-moderation-latest',
-            'ministral-3b-latest',
-            'ministral-8b-latest',
-            'open-mistral-nemo',
-            'mistral-small-latest',
-            'codestral-latest'
-        ];
+        try {
+            const rawResponse = await fetch(`${this.baseURL}/models`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${this.apiKey}`
+                }
+            });
+            const jsonResponse = await rawResponse.json();
+            return this._filterModels(jsonResponse.data);
+        } catch (error) {
+            console.log('Error fetching MistralAI models list.', error);
+        }
     }
 }
 class AnthropicWrapper extends LLMProviderBase {
@@ -172,13 +186,18 @@ class AnthropicWrapper extends LLMProviderBase {
             this.response.usage.input_tokens + this.response.usage.output_tokens
         );
     }
+    _filterModels(models) {
+        const blacklist = ['Old'];
+        return models.reduce((acc, model) => {
+            if (blacklist.every((el) => !model['id'].includes(el))) {
+                acc.push(model['id']);
+            }
+            return acc;
+        }, []);
+    }
     async getModels() {
-        return [
-            'claude-3-7-sonnet-latest',
-            'claude-3-5-sonnet-latest',
-            'claude-3-5-haiku-latest',
-            'claude-3-opus-20240229'
-        ];
+        const listModels = await this.anthropic.models.list({ limit: 1000 });
+        return this._filterModels(listModels.data);
     }
 }
 class OpenRouterWrapper extends LLMProviderBase {
@@ -209,12 +228,24 @@ class OpenRouterWrapper extends LLMProviderBase {
             }
         });
     }
+    _filterModels(models) {
+        const blacklist = [];
+        return models.reduce((acc, model) => {
+            if (blacklist.every((el) => !model['id'].includes(el))) {
+                acc.push(model['id']);
+            }
+            return acc;
+        }, []);
+    }
     async getModels() {
-        return [
-            'deepseek/deepseek-r1',
-            'google/gemini-flash-1.5',
-            'google/gemini-2.0-flash-001'
-        ];
+        try {
+            const response = await this.openai.models.list();
+            const filteredModels = this._filterModels(response.data);
+            return filteredModels;
+        } catch (error) {
+            console.log('Error fetching OpenRouter models:', error);
+            return error;
+        }
     }
 }
 module.exports = {

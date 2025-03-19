@@ -67,15 +67,14 @@ const ipc = (
         closeCreateTask();
     });
     ipcMain.handle('models:get', async (event) => {
-        await models.refresh(llmRouter);
         return models.getDict(undefined, true);
     });
     ipcMain.handle('models:get-all', async (event) => {
         return models.get();
     });
     ipcMain.handle('models:refresh', async (event) => {
-        await models.refresh(router);
-        return true;
+        const listModels = await models.refresh(llmRouter);
+        return listModels;
     });
     ipcMain.on('models:set-favorite', (event, modelId) => {
         models.setFavorite(modelId);
