@@ -1,4 +1,5 @@
 const searchInput = document.getElementById('search-input');
+const refreshModels = document.getElementById('refresh-models');
 
 class ModelsTable {
     constructor() {
@@ -65,4 +66,12 @@ const models = new ModelsTable();
 models.getAllModels().then(() => models.display());
 searchInput.addEventListener('input', (event) => {
     models.display();
+});
+
+refreshModels.addEventListener('click', (event) => {
+    refreshModels.classList.add('animate-spin');
+    window.electronAPI.refreshModels().then(() => {
+        refreshModels.classList.remove('animate-spin');
+        models.display();
+    });
 });
