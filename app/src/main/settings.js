@@ -7,8 +7,8 @@ class Settings {
         anthropic: 'settings:anthropic-api-key',
         openrouter: 'settings:openrouter-api-key'
     };
-    constructor() {
-        this.store = new Store();
+    constructor(store) {
+        this.store = store;
         this.apiKeyNames = Object.values(Settings.API_KEYS_MAPPING);
     }
     get(key) {

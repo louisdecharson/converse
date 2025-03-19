@@ -1,57 +1,29 @@
 const OpenAI = require('openai');
 const Anthropic = require('@anthropic-ai/sdk');
 
-class AIModel {
-    constructor(model, apiKey) {
-        this.model = model;
+class LLMProviderBase {
+    constructor(apiKey, store) {
         this.apiKey = apiKey;
+        this.store = store;
     }
-
-    // static async getAvailableModels(settings) {
-    //     // Default structure for available models
-    //     const models = {
-    //         openai: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'gpt-4o'],
-    //         anthropic: [
-    //             'claude-3-opus-20240229',
-    //             'claude-3-sonnet-20240229',
-    //             'claude-3-haiku-20240307'
-    //         ],
-    //         mistralai: [
-    //             'mistral-tiny',
-    //             'mistral-small',
-    //             'mistral-medium',
-    //             'mistral-large-latest'
-    //         ],
-    //         openrouter: [
-    //             'openai/gpt-4-turbo',
-    //             'anthropic/claude-3-opus',
-    //             'anthropic/claude-3-sonnet',
-    //             'meta-llama/llama-3-70b-instruct',
-    //             'google/gemini-pro'
-    //         ]
-    //     };
-
-        // Filter providers based on available API keys
-        const availableProviders = {};
-        for (const provider in models) {
-            try {
-                const apiKey = settings.getApiKey(provider);
-                if (apiKey) {
-                    availableProviders[provider] = models[provider];
-                }
-            } catch (error) {
-                console.error(
-                    `Error getting API key for ${provider}:`,
-                    error.message
-                );
-            }
-        }
-
-        return availableProviders;
-    }
-
-    async requestAPI(messages, instructions) {
+    async requestAPI(model, messages, instructions) {
         throw new Error('Not implemented');
+    }
+    async getModels() {
+        throw new Error('Not implemented');
+    }
+    async chatCompletion(model, messages, instructions) {
+        await this.requestAPI(messages, instructions);
+        const textResponse = this.getTextResponse();
+        const promptTokens = this.getPromptTokens();
+        const completionTokens = this.getCompletionTokens();
+        const totalTokens = this.getTotalTokens();
+        return {
+            textResponse: textResponse,
+            promptTokens: promptTokens,
+            completionTokens: completionTokens,
+            totalTokens: totalTokens
+        };
     }
     getTextResponse() {
         return this.response.choices[0].message.content;
@@ -65,39 +37,22 @@ class AIModel {
     getTotalTokens() {
         return this.response.usage.total_tokens;
     }
-    getModels() {
-        throw new Error('not implemented');
-    }
-    async chatCompletion(messages, instructions) {
-        await this.requestAPI(messages, instructions);
-        const textResponse = this.getTextResponse();
-        const promptTokens = this.getPromptTokens();
-        const completionTokens = this.getCompletionTokens();
-        const totalTokens = this.getTotalTokens();
-        return {
-            textResponse: textResponse,
-            promptTokens: promptTokens,
-            completionTokens: completionTokens,
-            totalTokens: totalTokens
-        };
-    }
 }
-
-class GPTModel extends AIModel {
-    constructor(model, apiKey) {
-        super(model, apiKey);
+class OpenAIWrapper extends LLMProviderBase {
+    constructor(apiKey, store) {
+        super(apiKey, store);
         this.openai = new OpenAI({
             apiKey: apiKey
         });
     }
-    async requestAPI(messages, instructions) {
+    async requestAPI(model, messages, instructions) {
         const instructionMessage = {
             role: 'system',
             content: instructions
         };
         const messagesWithInstructions = [instructionMessage, ...messages];
         this.response = await this.openai.chat.completions.create({
-            model: this.model,
+            model: model,
             messages: messagesWithInstructions,
             temperature: 1,
             max_tokens: 1024,
@@ -106,22 +61,34 @@ class GPTModel extends AIModel {
             presence_penalty: 0
         });
     }
+    // async getModels() {
+    //     try {
+    //         const response = await openai.models.list();
+    //         return response.data;
+    //     } catch (error) {
+    //         console.log('Error fetching OpenAI models');
+    //         return error;
+    //     }
+    // }
     async getModels() {
-        try {
-            const response = await openai.models.list();
-            return response.data;
-        } catch (error) {
-            console.log('Error fetching OpenAI models');
-            return error;
-        }
+        return [
+            'gpt-3.5-turbo',
+            'gpt-3.5-turbo-16k',
+            'gpt-4o-mini',
+            'gpt-4',
+            'gpt-4o',
+            'gpt-4-turbo',
+            'gpt-4-turbo-preview',
+            'gpt-4-32k',
+            'gpt-4-1106-preview'
+        ];
     }
 }
-
-class MistralModel extends AIModel {
-    constructor(model, apiKey) {
-        super(model, apiKey);
+class MistralAIWrapper extends LLMProviderBase {
+    constructor(apiKey, store) {
+        super(apiKey, store);
     }
-    async requestAPI(messages, instructions) {
+    async requestAPI(model, messages, instructions) {
         const instructionMessage = {
             role: 'system',
             content: instructions
@@ -138,7 +105,7 @@ class MistralModel extends AIModel {
                         Authorization: `Bearer ${this.apiKey}`
                     },
                     body: JSON.stringify({
-                        model: this.model,
+                        model: model,
                         messages: messagesWithInstructions,
                         temperature: 1,
                         max_tokens: 1024,
@@ -157,10 +124,21 @@ class MistralModel extends AIModel {
             throw new Error(error.message);
         }
     }
+    async getModels() {
+        return [
+            'mistral-large-latest',
+            'mistral-moderation-latest',
+            'ministral-3b-latest',
+            'ministral-8b-latest',
+            'open-mistral-nemo',
+            'mistral-small-latest',
+            'codestral-latest'
+        ];
+    }
 }
-class AnthropicModel extends AIModel {
-    constructor(model, apiKey) {
-        super(model, apiKey);
+class AnthropicWrapper extends LLMProviderBase {
+    constructor(apiKey, store) {
+        super(apiKey, store);
         this.anthropic = new Anthropic({ apiKey: apiKey });
     }
     replaceSystemRole(messages) {
@@ -171,7 +149,7 @@ class AnthropicModel extends AIModel {
             return message;
         });
     }
-    async requestAPI(messages, instructions) {
+    async requestAPI(model, messages, instructions) {
         this.response = await this.anthropic.messages.create({
             model: this.model,
             max_tokens: 1000,
@@ -194,23 +172,31 @@ class AnthropicModel extends AIModel {
             this.response.usage.input_tokens + this.response.usage.output_tokens
         );
     }
+    async getModels() {
+        return [
+            'claude-3-7-sonnet-latest',
+            'claude-3-5-sonnet-latest',
+            'claude-3-5-haiku-latest',
+            'claude-3-opus-20240229'
+        ];
+    }
 }
-class OpenRouterModel extends AIModel {
-    constructor(model, apiKey) {
-        super(model, apiKey);
+class OpenRouterWrapper extends LLMProviderBase {
+    constructor(apiKey, store) {
+        super(apiKey, store);
         this.openai = new OpenAI({
             apiKey: apiKey,
             baseURL: 'https://openrouter.ai/api/v1'
         });
     }
-    async requestAPI(messages, instructions) {
+    async requestAPI(model, messages, instructions) {
         const instructionMessage = {
             role: 'system',
             content: instructions
         };
         const messagesWithInstructions = [instructionMessage, ...messages];
         this.response = await this.openai.chat.completions.create({
-            model: this.model,
+            model: model,
             messages: messagesWithInstructions,
             temperature: 1,
             max_tokens: 1024,
@@ -223,11 +209,17 @@ class OpenRouterModel extends AIModel {
             }
         });
     }
+    async getModels() {
+        return [
+            'deepseek/deepseek-r1',
+            'google/gemini-flash-1.5',
+            'google/gemini-2.0-flash-001'
+        ];
+    }
 }
 module.exports = {
-    AIModel,
-    MistralModel,
-    GPTModel,
-    AnthropicModel,
-    OpenRouterModel
+    OpenAIWrapper,
+    MistralAIWrapper,
+    AnthropicWrapper,
+    OpenRouterWrapper: OpenRouterWrapper
 };

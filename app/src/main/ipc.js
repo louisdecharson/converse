@@ -1,12 +1,12 @@
 // IPC Logic
 const { ipcMain } = require('electron');
-const models = require('./models.js');
 
 const ipc = (
     chatHistory,
     tasksTable,
     llmRouter,
     settings,
+    models,
     closeSettingsWindow,
     closeCreateTask
 ) => {
@@ -66,22 +66,22 @@ const ipc = (
     ipcMain.on('create-task:close', (event) => {
         closeCreateTask();
     });
-    ipcMain.handle('get-models', async (event) => {
-        availableModels = {};
-        if (settings.getApiKey('openai') != null) {
-            availableModels['openai'] = models['openai'];
-        }
-        if (settings.getApiKey('mistralai') != null) {
-            availableModels['mistralai'] = models['mistralai'];
-        }
-        if (settings.getApiKey('anthropic') != null) {
-            availableModels['anthropic'] = models['anthropic'];
-        }
-        if (settings.getApiKey('openrouter') != null) {
-            availableModels['openrouter'] = models['openrouter'];
-        }
-
-        return availableModels;
+    ipcMain.handle('models:get', async (event) => {
+        await models.refresh(llmRouter);
+        return models.getDict(undefined, true);
+    });
+    ipcMain.handle('models:get-all', async (event) => {
+        return models.get();
+    });
+    ipcMain.handle('models:refresh', async (event) => {
+        await models.refresh(router);
+        return true;
+    });
+    ipcMain.on('models:set-favorite', (event, modelId) => {
+        models.setFavorite(modelId);
+    });
+    ipcMain.on('models:unset-favorite', (event, modelId) => {
+        models.unsetFavorite(modelId);
     });
     ipcMain.on('pintask', (event, taskId) => {
         tasksTable.update(taskId, { pinned: true });

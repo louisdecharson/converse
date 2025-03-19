@@ -16,9 +16,13 @@ const Router = require('./router.js');
 const ipc = require('./ipc.js');
 const startServer = require('./server.js');
 const Settings = require('./settings.js');
+const Models = require('./models.js');
+const Store = require('electron-store');
 
-const settings = new Settings();
+const store = new Store();
+const settings = new Settings(store);
 const llmRouter = new Router(settings);
+const models = new Models(store);
 
 let mainWindow;
 let settingsWindow;
@@ -106,9 +110,14 @@ app.on('ready', () => {
         }
     });
     const appMenu = Menu.buildFromTemplate(
-        menu(app.name, createSettingsWindow, () => {
-            mainWindow.webContents.send('history:view');
-        })
+        menu(
+            app.name,
+            createSettingsWindow,
+            () => {
+                mainWindow.webContents.send('history:view');
+            },
+            () => mainWindow.loadURL(`${url}:${port}/models`)
+        )
     );
     Menu.setApplicationMenu(appMenu);
 });
@@ -118,6 +127,7 @@ app.whenReady().then(() => {
         tasksTable,
         llmRouter,
         settings,
+        models,
         closeSettingsWindow,
         closeCreateTask
     ); // setup IPC communication

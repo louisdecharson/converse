@@ -1,4 +1,4 @@
-const menu = (appName, getSettings, showHistory) => [
+const menu = (appName, getSettings, showHistory, viewModels) => [
     {
         label: appName,
         submenu: [
@@ -14,6 +14,10 @@ const menu = (appName, getSettings, showHistory) => [
                 label: 'Show Chat History',
                 accelerator: 'Cmd+Y',
                 click: () => showHistory()
+            },
+            {
+                label: 'Models',
+                click: () => viewModels()
             },
             { type: 'separator' },
             { role: 'services' },

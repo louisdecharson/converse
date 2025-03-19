@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {{> header }}
+    </head>
+    <body class="flex flex-col min-h-screen bg-white dark:bg-neutral-800">
+        <div
+            class="sticky w-full top-0 flex justify-between items-center z-10 flex header-bar pl-10"
+        >
+            <div>
+                <button
+                    id="refresh-models"
+                    class="px-2 hover:bg-gray-200 dark:hover:bg-neutral-600 py-1 rounded"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        width="18px"
+                        height="18px"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
+                    </svg>
+                </button>
+            </div>
+            <div class="font-bold text-center">Models</div>
+            <div class="flex-col contain-inline-size px-4">
+                <input
+                    id="search-input"
+                    type="text"
+                    class="bg-transparent border border-gray-200 dark:border-neutral-600 rounded-lg p-1 focus:outline-none"
+                    placeholder="Search..."
+                />
+            </div>
+        </div>
+        <div class="pl-10">
+            <table class="min-w-full text-sm text-gray-800 dark:text-gray-200">
+                <thead>
+                    <tr
+                        class="border-b border-gray-100 dark:border-neutral-700"
+                    >
+                        <th class="py-1 text-left font-medium">Provider</th>
+                        <th class="py-1 text-left font-medium">Model</th>
+                        <th class="py-1 text-left font-medium">☆</th>
+                    </tr>
+                </thead>
+                <tbody
+                    class="divide-y divide-gray-100 dark:divide-neutral-700 overflow-auto"
+                    id="models-table-content"
+                ></tbody>
+            </table>
+        </div>
+        <div class="flex-grow even:bg-gray-50 dark:even:bg-neutral-700"></div>
+        <div
+            id="footer"
+            class="pl-10 bg-white dark:bg-neutral-800 text-left flex items-center border-t border-gray-100 dark:border-neutral-700"
+            style="height: 40px"
+        >
+            <button class="pl-10 native-button native-white-button">
+                <a href="/">Done</a>
+            </button>
+        </div>
+        <script src="./models_config.js"></script>
+    </body>
+</html>

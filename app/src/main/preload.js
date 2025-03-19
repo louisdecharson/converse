@@ -11,7 +11,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
             taskId,
             chatId
         }),
-    getModels: () => ipcRenderer.invoke('get-models'),
+    getModels: () => ipcRenderer.invoke('models:get'),
+    getAllModels: () => ipcRenderer.invoke('models:get-all'),
+    refreshModels: () => ipcRenderer.invoke('models:refresh'),
+    favModel: (modelId) => ipcRenderer.send('models:set-favorite', modelId),
+    unfavModel: (modelId) => ipcRenderer.send('models:unset-favorite', modelId),
     viewHistory: (callback) =>
         ipcRenderer.on('history:view', (event) => {
             callback();

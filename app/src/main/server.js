@@ -126,6 +126,7 @@ const startServer = (tasksTable, callback) => {
         );
     });
     app.get('/settings', (req, res) => res.render('settings'));
+    app.get('/models', (req, res) => res.render('models'));
     app.delete('/task/:rowid', (req, res) => {
         tasksTable.delete(req.params.rowid, (err) => {
             if (err) {
