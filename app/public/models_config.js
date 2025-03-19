@@ -35,12 +35,13 @@ class ModelsTable {
         if (skip) {
             return true;
         }
-        
+
         // Check if all search terms match at least one field in the model
-        return this.userInput.every(input => 
-            Object.values(model).some(value => 
-                typeof value === 'string' && 
-                value.toLowerCase().includes(input)
+        return this.userInput.every((input) =>
+            Object.values(model).some(
+                (value) =>
+                    typeof value === 'string' &&
+                    value.toLowerCase().includes(input)
             )
         );
     }
@@ -63,9 +64,11 @@ searchInput.addEventListener('input', (event) => {
 });
 
 refreshModels.addEventListener('click', (event) => {
-    refreshModels.classList.add('animate-spin');
-    window.electronAPI.refreshModels().then(() => {
-        refreshModels.classList.remove('animate-spin');
+    const svgIcon = refreshModels.getElementsByTagName('svg')[0];
+    svgIcon.classList.add('animate-spin');
+    window.electronAPI.refreshModels().then((listModels) => {
+        models.models = Object.values(listModels);
+        svgIcon.classList.remove('animate-spin');
         models.display();
     });
 });
