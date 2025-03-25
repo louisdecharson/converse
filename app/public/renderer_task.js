@@ -77,6 +77,7 @@ document.getElementById('toggle-sidebar').addEventListener('click', () => {
     toggleSidebar();
 });
 
+// History
 window.electronAPI.viewHistory(() => {
     toggleSidebar();
 });
@@ -98,7 +99,6 @@ document
     .addEventListener('click', async () => {
         localHistory.loadMore();
     });
-
 const displayModelSelectPopup = document.getElementById('display-model-select');
 const modelSelectPopup = document.getElementById('model-select-popup');
 
@@ -138,5 +138,83 @@ newTaskButton.addEventListener('click', () => {
         document.getElementById('text-input').value = '';
     }
 });
-
+const { Marked } = globalThis.marked;
+const { markedHighlight } = globalThis.markedHighlight;
+const marked = new Marked(
+    markedHighlight({
+        emptyLangClass: 'hljs',
+        langPrefix: 'hljs language-',
+        highlight(code, lang, info) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+        }
+    })
+);
 let currentChatId;
+// highlight.js and dark / light mode
+function setTheme() {
+    const lightTheme = document.getElementById('theme-light');
+    const darkTheme = document.getElementById('theme-dark');
+
+    if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+        darkTheme.removeAttribute('disabled');
+        lightTheme.setAttribute('disabled', 'true');
+    } else {
+        lightTheme.removeAttribute('disabled');
+        darkTheme.setAttribute('disabled', 'true');
+    }
+}
+
+// Set theme on initial load
+setTheme();
+
+// Listen for changes
+window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', setTheme);
+
+// Search for text
+function scrollToText(searchText) {
+    // Get the body text and HTML elements
+    const bodyText = document.body.innerText;
+    const index = bodyText.indexOf(searchText);
+
+    if (index !== -1) {
+        // Create a Range to find the position of the text
+        const range = document.createRange();
+        const selection = window.getSelection();
+
+        // Clear any previous selections
+        selection.removeAllRanges();
+
+        // Create a text node and set the range
+        const textNode = document.createTextNode(bodyText);
+        document.body.appendChild(textNode);
+        const endIndex = index + searchText.length;
+
+        // Set the range to the found text
+        range.setStart(textNode, index);
+        range.setEnd(textNode, endIndex);
+        selection.addRange(range);
+
+        // Scroll the text into view
+        const rect = range.getBoundingClientRect();
+        window.scrollTo({
+            top:
+                rect.top +
+                window.scrollY -
+                window.innerHeight / 2 +
+                rect.height / 2,
+            behavior: 'smooth'
+        });
+        console.log('done');
+
+        // Remove the text node after scrolling
+        document.body.removeChild(textNode);
+    } else {
+        console.log('Text not found.');
+    }
+}

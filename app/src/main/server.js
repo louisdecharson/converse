@@ -2,7 +2,7 @@ const path = require('node:path');
 const express = require('express');
 const hbs = require('hbs');
 
-const startServer = (tasksTable, callback) => {
+const startServer = (chatHistory, tasksTable, callback) => {
     const app = express();
     app.use(express.urlencoded({ extended: true }));
     const staticFilesDir = path.join(__dirname, '../../public');
@@ -111,6 +111,8 @@ const startServer = (tasksTable, callback) => {
         }
     });
     app.get('/task/:rowid', (req, res) => {
+        const chatId = req.query.chat_id;
+        const historyRowId = req.query.history_rowid;
         tasksTable.findMany(
             (err, tasks) => {
                 if (err) {
@@ -120,13 +122,34 @@ const startServer = (tasksTable, callback) => {
                         .send('Error occured while fetching task');
                 }
                 const task = tasks[0];
-                res.render('task', { task: task });
+                if (chatId) {
+                    chatHistory.findMany(
+                        (err, rows) => {
+                            if (err) {
+                                console.log(err);
+                                return res
+                                    .status(500)
+                                    .send(
+                                        'Error occured while fetching chat history'
+                                    );
+                            }
+                            res.render('task', {
+                                task: task,
+                                historyItem: JSON.stringify(rows[0])
+                            });
+                        },
+                        { rowid: historyRowId }
+                    );
+                } else {
+                    res.render('task', { task: task, historyItem: null });
+                }
             },
             { rowid: req.params.rowid }
         );
     });
     app.get('/settings', (req, res) => res.render('settings'));
     app.get('/models', (req, res) => res.render('models'));
+    app.get('/history', (req, res) => res.render('full_history'));
     app.delete('/task/:rowid', (req, res) => {
         tasksTable.delete(req.params.rowid, (err) => {
             if (err) {

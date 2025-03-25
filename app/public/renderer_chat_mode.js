@@ -34,7 +34,7 @@ class Chat {
         let classesContainer =
             'flex flex-col text-start flex max-w-full flex-col flex-grow text-start';
         let classes =
-            'p-2 rounded-lg my-1 relative min-h-8 gap-2 whitespace-normal break-words mx-auto text-base md:gap-5 lg:gap-6';
+            'p-2 rounded-lg my-1 relative min-h-8 gap-2 whitespace-normal break-words text-base md:gap-5 lg:gap-6';
         if (role === 'user') {
             messageDiv.className = `${classes} bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-neutral-700 w-full max-w-70`;
             messageDivContainer.className = `${classesContainer} items-end`;

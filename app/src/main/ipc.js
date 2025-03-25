@@ -54,6 +54,14 @@ const ipc = (
         );
         return rows;
     });
+    ipcMain.handle('history:get-all', async (event) => {
+        const fullHistory = await asyncWrapper(
+            chatHistory,
+            'getEnrichedHistory',
+            tasksTable
+        );
+        return fullHistory;
+    });
     ipcMain.on('settings:set', (event, userSettings) => {
         settings.setApiKey('openai', userSettings['openaiAPIKey']);
         settings.setApiKey('mistralai', userSettings['mistralAPIKey']);

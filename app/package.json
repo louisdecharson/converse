@@ -1,7 +1,7 @@
 {
   "name": "converse",
   "productName": "Converse",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "GUI wrapper around multiple LLM to chat and create text-based agents",
   "main": "src/main/index.js",
   "scripts": {
@@ -34,6 +34,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.35.0",
     "@electron/rebuild": "^3.7.1",
+    "@tailwindcss/cli": "^4.0.16",
     "electron-forge": "^0.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
@@ -42,7 +43,8 @@
     "hbs": "^4.2.0",
     "node-abi": "^3.71.0",
     "openai": "^4.20.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "tailwindcss": "^4.0.16"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.2.0",
@@ -53,8 +55,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
-    "prettier": "^3.1.1",
-    "tailwindcss": "^3.3.6"
+    "prettier": "^3.1.1"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

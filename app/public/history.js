@@ -74,6 +74,32 @@ class LocalHistory {
             return user_content;
         }
     }
+    loadItem(item, chatId) {
+        document.getElementById('provider-select').value = item.model_provider;
+        updateModels();
+        document.getElementById('model-select').value = item.model;
+        console.log(item.model_provider, item.model);
+        document.getElementById('prompt-instructions').innerText =
+            item.prompt_instructions;
+        if (this.chat) {
+            currentChatId = chatId;
+            chat.clear();
+            for (const message of JSON.parse(item.user_content)) {
+                if (message.role === 'user') {
+                    chat.addUserMessage(message.content);
+                } else if (message.role === 'system') {
+                    chat.addLLMMessage(message.content);
+                }
+            }
+            chat.addLLMMessage(item.response);
+        } else {
+            document.getElementById('text-input').value = this.getText(
+                item.user_content
+            );
+            showElement('output');
+            document.getElementById('output-text').innerText = item.response;
+        }
+    }
     displayItem(item, chatId) {
         const textUser = this.getText(item.user_content);
         const snippet = processString(textUser, 40);
@@ -88,29 +114,7 @@ class LocalHistory {
             'cursor-pointer p-1 border-b border-gray-300 dark:border-gray-500 dark:bg-neutral-600 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700';
         cell.textContent = snippet;
         cell.addEventListener('click', () => {
-            document.getElementById('provider-select').value =
-                item.model_provider;
-            updateModels();
-            document.getElementById('model-select').value = item.model;
-            document.getElementById('prompt-instructions').innerText =
-                item.prompt_instructions;
-            if (this.chat) {
-                currentChatId = chatId;
-                chat.clear();
-                for (const message of JSON.parse(item.user_content)) {
-                    if (message.role === 'user') {
-                        chat.addUserMessage(message.content);
-                    } else if (message.role === 'system') {
-                        chat.addLLMMessage(message.content);
-                    }
-                }
-                chat.addLLMMessage(item.response);
-            } else {
-                document.getElementById('text-input').value = textUser;
-                showElement('output');
-                document.getElementById('output-text').innerText =
-                    item.response;
-            }
+            this.loadItem(item, chatId);
         });
     }
 }

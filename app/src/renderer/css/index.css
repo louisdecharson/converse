@@ -1,6 +1,13 @@
+@import 'tailwindcss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+    ul,
+    ol {
+        all: revert;
+    }
+}
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
         Helvetica, Arial, sans-serif;
@@ -117,4 +124,27 @@ textarea:focus {
 }
 #main-content {
     height: calc(100vh - 40px); /* 40px is the height of the taskbar*/
+}
+
+code {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.95em;
+    color: #ff0080;
+}
+@media (prefers-color-scheme: dark) {
+    code {
+        color: #ff4f98;
+    }
+}
+
+#conversation th {
+    text-align: left;
+    border-bottom: 1px solid lightgray;
+    padding: 0.25rem;
+}
+
+#conversation td {
+    border-bottom: 0.5px solid lightgray;
+    padding: 0.25rem;
 }

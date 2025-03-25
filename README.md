@@ -37,7 +37,7 @@ npm start
 
 Compile CSS
 ```bash
-npx tailwindcss -i ./src/renderer/css/index.css -o ./public/output.css
+npx @tailwindcss/cli -i ./src/renderer/css/index.css -o ./public/output.css
 ```
 
 Build the app:

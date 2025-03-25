@@ -92,7 +92,7 @@ const closeSettingsWindow = () => {
     }
 };
 app.on('ready', () => {
-    startServer(tasksTable, (serverPort) => {
+    startServer(chatHistory, tasksTable, (serverPort) => {
         port = serverPort;
         console.log(`Loading ${url}:${port}`);
         createMainWindow();
@@ -116,7 +116,8 @@ app.on('ready', () => {
             () => {
                 mainWindow.webContents.send('history:view');
             },
-            () => mainWindow.loadURL(`${url}:${port}/models`)
+            () => mainWindow.loadURL(`${url}:${port}/models`),
+            () => mainWindow.loadURL(`${url}:${port}/history`)
         )
     );
     Menu.setApplicationMenu(appMenu);

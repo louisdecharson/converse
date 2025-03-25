@@ -165,7 +165,7 @@ class AnthropicWrapper extends LLMProviderBase {
     }
     async requestAPI(model, messages, instructions) {
         this.response = await this.anthropic.messages.create({
-            model: this.model,
+            model: model,
             max_tokens: 1000,
             temperature: 0,
             system: instructions,

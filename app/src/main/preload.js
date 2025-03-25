@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
         }),
     viewMoreHistory: (nbItems, taskId) =>
         ipcRenderer.invoke('history:view-more', nbItems, taskId),
+    getAllHistory: () => ipcRenderer.invoke('history:get-all'),
     closeCreateTask: () => ipcRenderer.send('create-task:close'),
     pinTask: (taskId) => ipcRenderer.send('pintask', taskId),
     unpinTask: (taskId) => ipcRenderer.send('unpintask', taskId)

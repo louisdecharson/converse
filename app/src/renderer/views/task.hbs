@@ -197,7 +197,22 @@
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            const historyItem  = {{#if historyItem}} {{{historyItem}}} {{else}} false {{/if}};
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked-highlight/lib/index.umd.js"></script>
+        <link
+            id="theme-light"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+        />
+        <link
+            id="theme-dark"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/nord.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
         <script src="../renderer_task.js"></script>
         <script src="../history.js"></script>
         <script src="../model_selection.js"></script>
@@ -206,5 +221,19 @@
         {{else}}
         <script src="../renderer_text_mode.js"></script>
         {{/if}}
+        <script type="text/javascript">
+            // View history item
+            if (historyItem) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const chatId = urlParams.get('chat_id');
+                localHistory.loadItem(historyItem, chatId);
+                document
+                    .getElementById('provider-select')
+                    .setAttribute('data-default', historyItem.model_provider);
+                document
+                    .getElementById('model-select')
+                    .setAttribute('data-default', historyItem.model);
+            }
+        </script>
     </body>
 </html>

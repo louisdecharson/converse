@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {{> header }}
+    </head>
+    <body
+        class="flex flex-col h-screen overflow-hidden bg-white dark:bg-neutral-800"
+    >
+        <div
+            class="sticky w-full top-0 flex justify-between items-center z-10 header-bar pl-10"
+        >
+            <div class="font-bold text-center">History</div>
+            <div class="flex px-4 space-x-2 min-w-1/2">
+                <div class="contain-inline-size flex-col w-full">
+                    <input
+                        id="search-input"
+                        type="text"
+                        class="bg-transparent border border-gray-200 dark:border-neutral-600 rounded-lg p-1 focus:outline-none w-full"
+                        placeholder="Search..."
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col flex-1 overflow-hidden pl-10">
+            <div class="flex flex-col flex-1 overflow-hidden">
+                <table
+                    class="w-full text-sm text-gray-800 dark:text-gray-200 table-fixed"
+                >
+                    <thead
+                        class="sticky top-0 bg-white dark:bg-neutral-800 z-10 table table-fixed w-full"
+                    >
+                        <tr
+                            class="border-b border-gray-100 dark:border-neutral-700"
+                        >
+                            <th class="py-1 text-left font-medium w-1/8">
+                                Task
+                            </th>
+                            <th
+                                id="conversation-header"
+                                class="py-1 text-left font-medium w-1/4"
+                            >
+                                Conversation
+                            </th>
+                            <th class="py-1 text-left font-medium w-1/4">
+                                Instructions
+                            </th>
+                            <th class="py-1 text-left font-medium w-1/8">
+                                Date
+                            </th>
+                            <th class="py-1 text-left font-medium w-1/8">
+                                Provider
+                            </th>
+                            <th class="py-1 text-left font-medium w-1/8">
+                                Model
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        class="divide-y divide-gray-100 dark:divide-neutral-700 block overflow-y-auto w-full"
+                        style="max-height: calc(100vh - 120px)"
+                        id="history-table-content"
+                    >
+                        <!-- {{#each chats}} -->
+                        <!-- <tr -->
+                        <!--     class="even:bg-gray-50 dark:even:bg-neutral-700 table table-fixed w-full" -->
+                        <!-- > -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/8" -->
+                        <!--     > -->
+                        <!--         {{task_id}} -->
+                        <!--     </td> -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/4" -->
+                        <!--     > -->
+                        <!--         {{user_content}} {{response}} -->
+                        <!--     </td> -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/4" -->
+                        <!--     > -->
+                        <!--         {{prompt_instructions}} -->
+                        <!--     </td> -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/8" -->
+                        <!--     > -->
+                        <!--         {{timestamp}} -->
+                        <!--     </td> -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/8" -->
+                        <!--     > -->
+                        <!--         {{model}} -->
+                        <!--     </td> -->
+                        <!--     <td -->
+                        <!--         class="overflow-x-hidden py-1 whitespace-nowrap text-sm w-1/8" -->
+                        <!--     > -->
+                        <!--         {{model_provider}} -->
+                        <!--     </td> -->
+                        <!-- </tr> -->
+                        <!-- {{/each}} -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div
+            id="footer"
+            class="sticky bottom-0 w-full pl-10 bg-white dark:bg-neutral-800 text-left flex items-center border-t border-gray-100 dark:border-neutral-700 even:bg-gray-50 dark:even:bg-neutral-700"
+            style="height: 40px"
+        >
+            <button class="pl-10 native-button native-action-button">
+                <a href="/">Done</a>
+            </button>
+        </div>
+        <div class="table table-fixed"></div>
+        <script src="../full_history.js"></script>
+    </body>
+</html>

@@ -115,6 +115,21 @@ class Table {
             }
         });
     }
+    getAll(callback, orderBy = false, ascending = false) {
+        const ascendingClause = ascending ? '' : 'DESC';
+        const orderByClause = orderBy
+            ? `ORDER BY ${orderBy} ${ascendingClause}`
+            : '';
+        const selectQuery = `SELECT ROWID, * FROM ${this.tableName} ${orderByClause};`;
+        this.db.all(selectQuery, (err, rows) => {
+            if (err) {
+                console.error(err.message);
+                callback(err, null);
+            } else {
+                callback(null, rows);
+            }
+        });
+    }
 }
 
 class HistoryTable extends Table {
@@ -165,6 +180,43 @@ class HistoryTable extends Table {
             task_id,
             chat_id
         );
+    }
+    getEnrichedHistory(callback, tasksTable) {
+        const query = `
+        SELECT rowid, *
+        FROM (
+        SELECT rowid, *,
+        ROW_NUMBER() OVER (PARTITION BY chat_id ORDER BY timestamp DESC) as rn
+        FROM ${this.tableName}
+        ) AS subquery
+        WHERE rn = 1 ORDER BY timestamp DESC;
+        `;
+        // Get all chat history records merge with task name
+        tasksTable.getAll((err, tasks) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                this.db.all(query, (err, fullHistory) => {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        const historyWithTaskName = fullHistory.map((chat) => {
+                            const task = tasks.find(
+                                (task) => task.rowid === chat.task_id
+                            );
+                            if (!task) {
+                                return {
+                                    ...chat,
+                                    task_name: 'Unknown Task'
+                                };
+                            }
+                            return { ...chat, task_name: task.name };
+                        });
+                        callback(null, historyWithTaskName);
+                    }
+                });
+            }
+        });
     }
 }
 class TasksTable extends Table {
