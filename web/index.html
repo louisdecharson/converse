@@ -92,13 +92,21 @@
             /* Header styles */
             header {
                 padding: 2rem;
+                position: sticky;
+                top: 0;
+                width: 100%;
+                z-index: 10;
+                background: inherit;
+                background: rgba(255, 255, 255, 0.005); /* Semi-transparent */
+                backdrop-filter: blur(10px); /* Blur effect */
+            }
+            .header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                position: relative;
                 max-width: 1200px;
                 margin: 0 auto;
-                position: relative;
-                z-index: 10;
             }
 
             .logo {
@@ -509,16 +517,18 @@
     </head>
     <body>
         <header>
-            <div class="logo">Converse</div>
-            <div class="nav-links">
-                <a href="#screenshots">Screenshots</a>
-                <a href="#releases">Releases</a>
-                <a href="#faq">FAQ</a>
-                <a
-                    href="https://github.com/louisdecharson/converse"
-                    target="_blank"
-                    >GitHub</a
-                >
+            <div class="header">
+                <div class="logo">Converse</div>
+                <div class="nav-links">
+                    <a href="#screenshots">Screenshots</a>
+                    <a href="#releases">Releases</a>
+                    <a href="#faq">FAQ</a>
+                    <a
+                        href="https://github.com/louisdecharson/converse"
+                        target="_blank"
+                        >GitHub</a
+                    >
+                </div>
             </div>
         </header>
 
