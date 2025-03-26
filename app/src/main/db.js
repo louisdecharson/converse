@@ -2,19 +2,45 @@ const sqlite3 = require('sqlite3');
 const path = require('path');
 
 class Table {
-    constructor(database, createQuery, tableName) {
+    constructor(database, tableName, createQuery = null) {
         this.db = database;
-        this.createQuery = createQuery;
         this.tableName = tableName;
-        this.db.run(this.createQuery, (err) => {
-            if (err) {
-                console.error(
-                    `Error when creating the database ${this.tableName}:`,
-                    err.message
-                );
-            } else {
-                console.log(`${this.tableName} table created successfully`);
-            }
+        if (createQuery) {
+            this.createTable(createQuery);
+        }
+    }
+    createTable(createQuery) {
+        return new Promise((resolve, reject) => {
+            this.db.run(createQuery, (err) => {
+                if (err) {
+                    console.error(
+                        `Error when creating the database ${this.tableName}:`,
+                        err.message
+                    );
+                    reject(err);
+                } else {
+                    console.log(`${this.tableName} table created successfully`);
+                    resolve();
+                }
+            });
+        });
+    }
+    tableExists() {
+        return new Promise((resolve, reject) => {
+            const query = `
+            SELECT name FROM sqlite_master WHERE type='table' AND name=?;`;
+            this.db.get(query, [this.tableName], (err, row) => {
+                if (err) {
+                    console.error(
+                        `Error when checking if table ${this.tableName} exists:`,
+                        err.message
+                    );
+                    reject(err);
+                } else {
+                    // Returns true if the table exists, false otherwise
+                    resolve(!!row);
+                }
+            });
         });
     }
     insert(...args) {
@@ -150,7 +176,7 @@ class HistoryTable extends Table {
         chat_id INTEGER
         );
 `;
-        super(database, createHistoryTableQuery, 'HISTORY');
+        super(database, 'HISTORY', createHistoryTableQuery);
     }
     insert(
         user,
@@ -238,9 +264,46 @@ class TasksTable extends Table {
         pinned INTEGER
         );
 `;
-        super(database, createInstructionsTableQuery, 'TASKS');
+        super(database, 'TASKS');
+        this.defaultTasks = [
+            {
+                name: 'Chat',
+                promptInstructions:
+                    'You are a helpful LLM model. Please respond as concisely as possible.',
+                description: 'Chat with LLM models to get help with any topic.',
+                actionName: 'Chat',
+                chatMode: 1,
+                defaultProvider: 'openai'
+            },
+            {
+                name: 'Rephrase',
+                promptInstructions:
+                    'You are a helpful assistant that rephrase idiomatically to help non-native English speakers to communication. Minimise the number of changes you make to the initial text. Initial email will be sent to you and you just need to send back the improved text. Do not include anything before or after the re-drafted text. Never include things like "Hello, I am an assistant ...,  do not include additional context about the fact that you are an assistant, etc',
+                description: 'Rephrase text in idiomatic English',
+                actionName: 'Improve',
+                chatMode: 0,
+                defaultProvider: 'openai'
+            }
+        ];
+        // Check if table exists and add default tasks if it's new
+        this.tableExists().then((exists) => {
+            if (!exists) {
+                this.createTable(createInstructionsTableQuery).then(() => {
+                    console.log('TasksTable is new, adding default tasks...');
+                    this.addDefaultTasks();
+                });
+            }
+        });
     }
-    insert(name, promptInstructions, description, actionName, chatMode) {
+    insert(
+        name,
+        promptInstructions,
+        description,
+        actionName,
+        chatMode,
+        defaultProvider = 'openai',
+        defaultModel = 'default'
+    ) {
         const timestamp = new Date().toISOString();
         return super.insert(
             timestamp,
@@ -248,8 +311,8 @@ class TasksTable extends Table {
             promptInstructions,
             actionName,
             description,
-            'openai',
-            'default',
+            defaultProvider,
+            defaultModel,
             chatMode,
             '#6c5ce7',
             '',
@@ -257,6 +320,23 @@ class TasksTable extends Table {
             timestamp,
             0
         );
+    }
+    async addDefaultTasks() {
+        for (const task of this.defaultTasks) {
+            try {
+                await this.insert(
+                    task.name,
+                    task.promptInstructions,
+                    task.description,
+                    task.actionName,
+                    task.chatMode,
+                    task.defaultProvider
+                );
+                console.log(`Added default task: ${task.name}`);
+            } catch (error) {
+                console.error(`Error adding default task ${task.name}:`, error);
+            }
+        }
     }
 }
 
