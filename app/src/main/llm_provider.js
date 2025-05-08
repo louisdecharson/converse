@@ -38,12 +38,14 @@ class LLMProviderBase {
         return this.response.usage.total_tokens;
     }
 }
-class OpenAIWrapper extends LLMProviderBase {
-    constructor(apiKey, store) {
+class OpenAIBaseWrapper extends LLMProviderBase {
+    constructor(url, apiKey, store, extraHeaders = {}) {
         super(apiKey, store);
         this.openai = new OpenAI({
-            apiKey: apiKey
+            apiKey: apiKey,
+            baseURL: url
         });
+        this.extraHeaders = extraHeaders;
     }
     async requestAPI(model, messages, instructions) {
         const instructionMessage = {
@@ -51,15 +53,42 @@ class OpenAIWrapper extends LLMProviderBase {
             content: instructions
         };
         const messagesWithInstructions = [instructionMessage, ...messages];
-        this.response = await this.openai.chat.completions.create({
+        const requestOptions = {
             model: model,
             messages: messagesWithInstructions,
             temperature: 1,
-            max_tokens: 1024,
+            max_completion_tokens: 1024,
             top_p: 1,
             frequency_penalty: 0,
             presence_penalty: 0
-        });
+        };
+        if (this.extraHeaders && Object.keys(this.extraHeaders).length > 0) {
+            requestOptions.headers = this.extraHeaders;
+        }
+        this.response =
+            await this.openai.chat.completions.create(requestOptions);
+    }
+    _filterModels(models) {
+        return models.reduce((acc, model) => {
+            acc.push(model['id']);
+            return acc;
+        }, []);
+    }
+    async getModels() {
+        try {
+            const response = await this.openai.models.list();
+            const filteredModels = this._filterModels(response.data);
+            return filteredModels;
+        } catch (error) {
+            console.log('Error fetching OpenAI models:', error);
+            return error;
+        }
+    }
+}
+class OpenAIWrapper extends OpenAIBaseWrapper {
+    constructor(apiKey, store) {
+        const url = 'https://api.openai.com/v1';
+        super(url, apiKey, store);
     }
     _filterModels(models) {
         const startsWith = ['gpt-', 'o'];
@@ -73,16 +102,6 @@ class OpenAIWrapper extends LLMProviderBase {
             }
             return acc;
         }, []);
-    }
-    async getModels() {
-        try {
-            const response = await this.openai.models.list();
-            const filteredModels = this._filterModels(response.data);
-            return filteredModels;
-        } catch (error) {
-            console.log('Error fetching OpenAI models:', error);
-            return error;
-        }
     }
 }
 class MistralAIWrapper extends LLMProviderBase {
@@ -200,33 +219,14 @@ class AnthropicWrapper extends LLMProviderBase {
         return this._filterModels(listModels.data);
     }
 }
-class OpenRouterWrapper extends LLMProviderBase {
+class OpenRouterWrapper extends OpenAIBaseWrapper {
     constructor(apiKey, store) {
-        super(apiKey, store);
-        this.openai = new OpenAI({
-            apiKey: apiKey,
-            baseURL: 'https://openrouter.ai/api/v1'
-        });
-    }
-    async requestAPI(model, messages, instructions) {
-        const instructionMessage = {
-            role: 'system',
-            content: instructions
+        const url = 'https://openrouter.ai/api/v1';
+        const extraHeaders = {
+            'HTTP-Referer': 'https://github.com/louisdecharson/converse',
+            'X-Title': 'Converse'
         };
-        const messagesWithInstructions = [instructionMessage, ...messages];
-        this.response = await this.openai.chat.completions.create({
-            model: model,
-            messages: messagesWithInstructions,
-            temperature: 1,
-            max_tokens: 1024,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-            extra_headers: {
-                'HTTP-Referer': 'https://github.com/louisdecharson/converse',
-                'X-Title': 'Converse'
-            }
-        });
+        super(url, apiKey, store, extraHeaders);
     }
     _filterModels(models) {
         const blacklist = [];
@@ -237,20 +237,10 @@ class OpenRouterWrapper extends LLMProviderBase {
             return acc;
         }, []);
     }
-    async getModels() {
-        try {
-            const response = await this.openai.models.list();
-            const filteredModels = this._filterModels(response.data);
-            return filteredModels;
-        } catch (error) {
-            console.log('Error fetching OpenRouter models:', error);
-            return error;
-        }
-    }
 }
 module.exports = {
     OpenAIWrapper,
     MistralAIWrapper,
     AnthropicWrapper,
-    OpenRouterWrapper: OpenRouterWrapper
+    OpenRouterWrapper
 };
