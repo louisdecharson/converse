@@ -43,16 +43,17 @@ class Models {
     getModelId(provider, model) {
         return `${provider}-${model}`;
     }
-    getDefaultEntry(provider, model) {
+    getDefaultEntry(provider, model, modelId) {
         return {
             provider: provider,
             model: model,
             favorite: DEFAULT_FAV_MODELS[provider].includes(model),
-            id: this.getModelId(provider, model)
+            id: modelId
         };
     }
     set(models) {
         this.store.set(this.store_key, models);
+        this.models = models;
     }
     async refresh(router) {
         const rawModels = await router.fetchModels();
@@ -63,7 +64,7 @@ class Models {
                 models[modelId] =
                     modelId in this.models
                         ? this.models[modelId]
-                        : this.getDefaultEntry(provider, model);
+                        : this.getDefaultEntry(provider, model, modelId);
             }
         }
         this.set(models);

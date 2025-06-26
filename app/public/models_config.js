@@ -44,16 +44,21 @@ class ModelsTable {
         }
 
         // Check if all search terms match at least one field in the model
-        return this.userInput.every((input) =>
-            Object.values(model).some(
-                (value) =>
-                    typeof value === 'string' &&
-                    value.toLowerCase().includes(input)
+        return (
+            // true if showing favorites only or model is favorite
+            (!showFavOnly || model['favorite']) &&
+            // true if user input matches at least one field of model
+            this.userInput.every((input) =>
+                Object.values(model).some(
+                    (value) =>
+                        typeof value === 'string' &&
+                        value.toLowerCase().includes(input)
+                )
             )
         );
     }
 }
-const favModel = (favElement) => {
+const favModel = async (favElement) => {
     const modelId = favElement.getAttribute('data-modelid');
     if (favElement.innerHTML == '★') {
         window.electronAPI.unfavModel(modelId);
@@ -62,6 +67,7 @@ const favModel = (favElement) => {
         window.electronAPI.favModel(modelId);
         favElement.innerHTML = '★';
     }
+    await models.getAllModels();
 };
 
 const models = new ModelsTable();

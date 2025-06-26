@@ -1,20 +1,19 @@
 {
   "name": "converse",
   "productName": "Converse",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "GUI wrapper around multiple LLM to chat and create text-based agents",
   "main": "src/main/index.js",
   "scripts": {
-    "dev": "electron-webpack dev",
     "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
     "dist": "yarn compile && electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "build": {
     "appId": "louisdecharson.github.io/converse",
@@ -47,6 +46,7 @@
     "tailwindcss": "^4.0.16"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
     "@electron-forge/cli": "^7.2.0",
     "@electron-forge/maker-deb": "^7.2.0",
     "@electron-forge/maker-rpm": "^7.2.0",
@@ -55,6 +55,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
+    "jest": "^29.7.0",
     "prettier": "^3.1.1"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
