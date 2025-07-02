@@ -131,7 +131,7 @@
     <script src="./model_selection.js"></script>
     <script>
             document.getElementById('cancel').addEventListener('click', () => {
-                window.electronAPI.closeCreateTask();
+                window.location.href = window.location.origin;
             });
             const fetchURL = window.location.href.split('/').pop();
             document

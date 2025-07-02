@@ -8,7 +8,7 @@ const ipc = (
     settings,
     models,
     closeSettingsWindow,
-    closeCreateTask
+    closeCurrentWindow
 ) => {
     ipcMain.handle(
         'chat',
@@ -71,8 +71,8 @@ const ipc = (
     ipcMain.on('settings:close', (event) => {
         closeSettingsWindow();
     });
-    ipcMain.on('create-task:close', (event) => {
-        closeCreateTask();
+    ipcMain.on('current-window:close', (event) => {
+        closeCurrentWindow();
     });
     ipcMain.handle('models:get', async (event) => {
         return models.getDict(undefined, true);

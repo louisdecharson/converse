@@ -3,7 +3,8 @@ const menu = (
     getSettings,
     showHistory,
     viewModels,
-    showFullHistory
+    showFullHistory,
+    createWindow
 ) => [
     {
         label: appName,
@@ -39,6 +40,19 @@ const menu = (
             { role: 'unhide' },
             { type: 'separator' },
             { role: 'quit' }
+        ]
+    },
+    // { role: 'File' }
+    {
+        label: 'File',
+        submenu: [
+            {
+                label: 'New Window',
+                accelerator: 'Command+N',
+                click: () => {
+                    createWindow();
+                }
+            }
         ]
     },
     // { role: 'editMenu' }

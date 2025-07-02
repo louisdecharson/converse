@@ -132,6 +132,7 @@ newTaskButton.addEventListener('click', () => {
     if (typeof chat !== 'undefined') {
         chat.clear();
         currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
+        document.getElementById('error').innerHTML = '';
     } else {
         hideElement('output');
         document.getElementById('output-text').innerHTML = '';

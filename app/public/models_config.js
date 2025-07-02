@@ -98,3 +98,7 @@ onlyFavButton.addEventListener('click', (event) => {
     }
     models.display();
 });
+
+document.getElementById('done-button').addEventListener('click', () => {
+    window.electronAPI.closeCurrentWindow();
+});

@@ -26,8 +26,9 @@ const models = new Models(store);
 
 let mainWindow;
 let settingsWindow;
+const windows = new Set();
 
-const url = 'http://localhost';
+const host = 'http://localhost';
 let port;
 
 // Database
@@ -38,16 +39,53 @@ const chatHistory = new HistoryTable(database); // store chat history
 const tasksTable = new TasksTable(database); // store user configuration
 
 // create windows
+const createWindow = (url = null) => {
+    let x, y;
+    const currentWindow = BrowserWindow.getFocusedWindow();
+
+    if (currentWindow) {
+        const [currentWindowX, currentWindowY] = currentWindow.getPosition();
+        x = currentWindowX + 24;
+        y = currentWindowY + 24;
+    }
+    let newWindow = new BrowserWindow({
+        width: 850,
+        height: 600,
+        x: x,
+        y: y,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    });
+    if (!url) {
+        url = `${host}:${port}`;
+    }
+    newWindow.loadURL(url);
+    newWindow.webContents.on('did-finish-load', () => {
+        if (!newWindow) {
+            throw new Error('"newWindow" is not defined');
+        }
+        if (process.env.START_MINIMIZED) {
+            newWindow.minimize();
+        } else {
+            newWindow.show();
+            newWindow.focus();
+        }
+    });
+    newWindow.on('closed', () => {
+        windows.delete(newWindow);
+        newWindow = null;
+    });
+    // newWindow.on('focus', () => {
+    //     newWindow.focus();
+    // });
+    windows.add(newWindow);
+    return newWindow;
+};
 const createMainWindow = () => {
     if (!mainWindow) {
-        mainWindow = new BrowserWindow({
-            width: 850,
-            height: 600,
-            webPreferences: {
-                preload: path.join(__dirname, 'preload.js')
-            }
-        });
-        mainWindow.loadURL(`${url}:${port}`);
+        mainWindow = createWindow();
+        mainWindow.loadURL(`${host}:${port}`);
         console.log('creating main window');
         mainWindow.on('closed', () => {
             mainWindow = null;
@@ -56,8 +94,13 @@ const createMainWindow = () => {
         mainWindow.focus();
     }
 };
-const closeCreateTask = () => {
-    mainWindow.loadURL(`${url}:${port}`);
+// create models windows
+const createModelsWindow = () => {};
+const closeCurrentWindow = () => {
+    const currentWindow = BrowserWindow.getFocusedWindow();
+    if (currentWindow) {
+        currentWindow.close();
+    }
 };
 const createSettingsWindow = (displayWelcomeMessage) => {
     if (!settingsWindow) {
@@ -68,7 +111,7 @@ const createSettingsWindow = (displayWelcomeMessage) => {
                 preload: path.join(__dirname, 'preload_settings.js')
             }
         });
-        settingsWindow.loadURL(`${url}:${port}/settings`);
+        settingsWindow.loadURL(`${host}:${port}/settings`);
         settingsWindow.webContents.on('did-finish-load', () => {
             settingsWindow.webContents.send('settings:view', {
                 openaiAPIKey: settings.getApiKey('openai'),
@@ -94,7 +137,7 @@ const closeSettingsWindow = () => {
 app.on('ready', () => {
     startServer(chatHistory, tasksTable, (serverPort) => {
         port = serverPort;
-        console.log(`Loading ${url}:${port}`);
+        console.log(`Loading ${host}:${port}`);
         createMainWindow();
         if (!settings.hasDefinedApiKeys()) {
             createSettingsWindow(true);
@@ -116,8 +159,12 @@ app.on('ready', () => {
             () => {
                 mainWindow.webContents.send('history:view');
             },
-            () => mainWindow.loadURL(`${url}:${port}/models`),
-            () => mainWindow.loadURL(`${url}:${port}/history`)
+            () => createWindow(`${host}:${port}/models`),
+            () => {
+                const currentWindow = BrowserWindow.getFocusedWindow();
+                currentWindow.loadURL(`${host}:${port}/history`);
+            },
+            () => createWindow()
         )
     );
     Menu.setApplicationMenu(appMenu);
@@ -130,7 +177,7 @@ app.whenReady().then(() => {
         settings,
         models,
         closeSettingsWindow,
-        closeCreateTask
+        closeCurrentWindow
     ); // setup IPC communication
 });
 
@@ -148,7 +195,7 @@ app.on('activate', () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
         createMainWindow();
-        mainWindow.loadURL(`${url}:${port}`);
+        mainWindow.loadURL(`${host}:${port}`);
         if (!settings.hasDefinedApiKeys()) {
             createSettingsWindow(true);
         }
