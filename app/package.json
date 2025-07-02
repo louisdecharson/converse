@@ -1,7 +1,7 @@
 {
   "name": "converse",
   "productName": "Converse",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "GUI wrapper around multiple LLM to chat and create text-based agents",
   "main": "src/main/index.js",
   "scripts": {
