@@ -1,8 +1,11 @@
+const svgReload = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" width="18px" height="18px" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>`;
+
 class Chat {
     constructor() {
         this.messages = [];
         this.conversationElement = document.getElementById('conversation');
         this.container = document.getElementById('conversation-container');
+        this.reloadButton = false;
     }
     clear() {
         this.messages = [];
@@ -14,8 +17,7 @@ class Chat {
             role: 'user',
             content: message
         });
-        this.appendMessage('user', message);
-        // add logic to append an article html node to node with id conversation
+        this.appendMessage('user', message, true);
     }
     addLLMMessage(message) {
         this.messages.push({
@@ -23,9 +25,8 @@ class Chat {
             content: message
         });
         this.appendMessage('system', message);
-        // add logic to append an article html node to node with id conversation
     }
-    appendMessage(role, message) {
+    appendMessage(role, message, appendReload = false) {
         const messageDivContainer = document.createElement('div');
         const messageDiv = document.createElement('div');
         messageDiv.innerHTML = marked.parse(message);
@@ -45,6 +46,22 @@ class Chat {
         messageDivContainer.appendChild(messageDiv);
         this.conversationElement.appendChild(messageDivContainer);
         this.container.scrollTop = this.container.scrollHeight;
+
+        if (appendReload) {
+            this.reloadButton = document.createElement('button');
+            this.reloadButton.innerHTML =
+                svgReload + `<span class="italic">Try again</span>`;
+            this.reloadButton.className =
+                'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex flex-row gap-2 hidden';
+            this.reloadButton.addEventListener('click', () => {
+                submitMessage();
+                this.reloadButton.classList.toggle('hidden');
+            });
+            messageDivContainer.appendChild(this.reloadButton);
+        }
+    }
+    displayReloadButton() {
+        this.reloadButton.classList.toggle('hidden');
     }
 }
 const chat = new Chat();
@@ -61,12 +78,7 @@ chatPromptDiv.addEventListener('keydown', (event) => {
             return;
         }
         event.preventDefault();
-        const userMessage = chatTextarea.value.trim();
-        const formattedMessage = userMessage.replace(/\n/g, '<br>');
-        if (userMessage) {
-            submitMessage(userMessage, formattedMessage);
-        }
-        chatPromptDiv.innerText = '';
+        triggerMessageSubmission();
     }
 });
 // Add a click event listener to the chat-container
@@ -76,18 +88,36 @@ chatComposer.addEventListener('click', () => {
 });
 const loadingSpinner = document.getElementById('loading-spinner');
 const chatContainer = document.getElementById('chat-container');
-const submitMessage = async (message, formattedMessage) => {
+const triggerMessageSubmission = () => {
+    const userMessage = chatTextarea.value.trim();
+
+    if (userMessage) {
+        // format user message
+        const formattedMessage = userMessage.replace(/\n/g, '<br>');
+        // add message to chat
+        chat.addUserMessage(formattedMessage);
+
+        // generate chatId
+        if (!currentChatId) {
+            currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
+        }
+
+        submitMessage();
+    }
+    chatPromptDiv.innerText = '';
+};
+const submitMessage = async () => {
+    // show loadingSpinner
+    loadingSpinner.classList.toggle('hidden');
+    // reset error
     document.getElementById('error').innerHTML = '';
-    chat.addUserMessage(formattedMessage);
+
+    // collect provider, model, promptinstructions
     const provider = document.getElementById('provider-select').value;
     const model = document.getElementById('model-select').value;
     const promptInstructions = document.getElementById(
         'prompt-instructions'
     ).value;
-    loadingSpinner.classList.toggle('hidden');
-    if (!currentChatId) {
-        currentChatId = crypto.getRandomValues(new Uint32Array(1))[0];
-    }
     try {
         const { textResponse, rowId } = await window.electronAPI.chat({
             messages: chat.messages,
@@ -109,9 +139,11 @@ const submitMessage = async (message, formattedMessage) => {
         );
         loadingSpinner.classList.toggle('hidden');
     } catch (error) {
+        console.log(error);
         document.getElementById('error').innerHTML =
             'Error when processing your request. ' + error;
         loadingSpinner.classList.toggle('hidden');
+        chat.displayReloadButton();
     }
 };
 
