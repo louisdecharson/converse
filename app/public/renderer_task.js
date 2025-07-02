@@ -30,22 +30,32 @@ const taskId = parseInt(
 );
 
 // Hide and show prompt instructions
-displayInstructionsButton = document.getElementById('display-instructions');
-displayInstructionsContainer = document.getElementById(
+const displayInstructionsButton = document.getElementById(
+    'display-instructions'
+);
+const displayInstructionsContainer = document.getElementById(
     'prompt-instructions-container'
 );
+const displayModelSelectPopup = document.getElementById('display-model-select');
+const modelSelectPopup = document.getElementById('model-select-popup');
+
 hideElement('prompt-instructions-container');
 let instructionsDisplayed = false;
-displayInstructionsButton.addEventListener('click', () => {
+hideDisplayInstruction = () => {
+    hideElement('prompt-instructions-container');
+    instructionsDisplayed = false;
+    displayInstructionsButton.classList.remove('bg-gray-200');
+    displayInstructionsButton.classList.remove('dark:bg-neutral-600');
+};
+
+toggledisplayInstruction = () => {
     const displayInstructionsButtonRect =
         displayInstructionsButton.getBoundingClientRect();
     const sidebarWidth = sidebar.getBoundingClientRect().width;
     if (instructionsDisplayed) {
-        hideElement('prompt-instructions-container');
-        instructionsDisplayed = false;
-        displayInstructionsButton.classList.remove('bg-gray-200');
-        displayInstructionsButton.classList.remove('dark:bg-neutral-600');
+        hideDisplayInstruction();
     } else {
+        hideModelSelectPopup();
         displayInstructionsContainer.style.left = `${
             displayInstructionsButtonRect.left + window.scrollX - sidebarWidth
         }px`;
@@ -57,7 +67,8 @@ displayInstructionsButton.addEventListener('click', () => {
         displayInstructionsButton.classList.add('bg-gray-200');
         displayInstructionsButton.classList.add('dark:bg-neutral-600');
     }
-});
+};
+displayInstructionsButton.addEventListener('click', toggledisplayInstruction);
 
 // Sidebar
 const sidebar = document.getElementById('sidebar');
@@ -99,25 +110,32 @@ document
     .addEventListener('click', async () => {
         localHistory.loadMore();
     });
-const displayModelSelectPopup = document.getElementById('display-model-select');
-const modelSelectPopup = document.getElementById('model-select-popup');
 
-displayModelSelectPopup.addEventListener('click', (event) => {
+hideModelSelectPopup = () => {
+    modelSelectPopup.classList.add('hidden');
+    displayModelSelectPopup.classList.remove('bg-gray-200');
+    displayModelSelectPopup.classList.remove('dark:bg-neutral-600');
+};
+toggleModelSelectPopup = () => {
     const rect = displayModelSelectPopup.getBoundingClientRect();
     const sidebarWidth = sidebar.getBoundingClientRect().width;
     modelSelectPopup.style.left = `${
         rect.left + window.scrollX - sidebarWidth
     }px`; // Set left position
     modelSelectPopup.style.top = `${rect.bottom + 5}px`; // Set top position
-    modelSelectPopup.classList.toggle('hidden'); // Show the popup
     if (modelSelectPopup.classList.contains('hidden')) {
-        displayModelSelectPopup.classList.remove('bg-gray-200');
-        displayModelSelectPopup.classList.remove('dark:bg-neutral-600');
-    } else {
+        hideDisplayInstruction();
+        modelSelectPopup.classList.remove('hidden');
         displayModelSelectPopup.classList.add('bg-gray-200');
         displayModelSelectPopup.classList.add('dark:bg-neutral-600');
+    } else {
+        hideModelSelectPopup();
     }
-});
+};
+
+displayModelSelectPopup.addEventListener('click', () =>
+    toggleModelSelectPopup()
+);
 window.addEventListener('click', (event) => {
     if (
         !modelSelectPopup.contains(event.target) &&

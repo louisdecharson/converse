@@ -156,15 +156,13 @@ app.on('ready', () => {
         menu(
             app.name,
             createSettingsWindow,
-            () => {
-                mainWindow.webContents.send('history:view');
-            },
             () => createWindow(`${host}:${port}/models`),
             () => {
                 const currentWindow = BrowserWindow.getFocusedWindow();
                 currentWindow.loadURL(`${host}:${port}/history`);
             },
-            () => createWindow()
+            createWindow,
+            closeCurrentWindow
         )
     );
     Menu.setApplicationMenu(appMenu);

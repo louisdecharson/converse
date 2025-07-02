@@ -1,10 +1,10 @@
 const menu = (
     appName,
     getSettings,
-    showHistory,
     viewModels,
     showFullHistory,
-    createWindow
+    createWindow,
+    closeCurrentWindow
 ) => [
     {
         label: appName,
@@ -15,22 +15,6 @@ const menu = (
                 label: 'Settings...',
                 accelerator: 'Cmd+,',
                 click: () => getSettings(false)
-            },
-            { type: 'separator' },
-            {
-                label: 'Show Chat History',
-                accelerator: 'Cmd+Shift+Y',
-                click: () => showHistory()
-            },
-            {
-                label: 'Show Full History',
-                accelerator: 'Cmd+Y',
-                click: () => showFullHistory()
-            },
-            {
-                label: 'Models',
-                accelerator: 'Cmd+M',
-                click: () => viewModels()
             },
             { type: 'separator' },
             { role: 'services' },
@@ -52,6 +36,25 @@ const menu = (
                 click: () => {
                     createWindow();
                 }
+            },
+            {
+                label: 'Close Window',
+                accelerator: 'Command+W',
+                click: () => {
+                    closeCurrentWindow();
+                }
+            },
+            { type: 'separator' },
+            {
+                label: 'Show Full History',
+                accelerator: 'Cmd+Y',
+                click: () => showFullHistory()
+            },
+            { type: 'separator' },
+            {
+                label: 'Models',
+                accelerator: 'Cmd+M',
+                click: () => viewModels()
             }
         ]
     },
